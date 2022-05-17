@@ -1,14 +1,14 @@
 package org.tss.unit.modular;
 
-import org.tss.base.Constructable;
+import org.tss.base.Destructable;
 import org.tss.base.Entity;
 import org.tss.base.ModalDoubleValue;
 import org.tss.unit.Harmable;
 
-public abstract class Modul implements Entity, Constructable, Harmable {
+public abstract class Modul implements Entity, Destructable, Harmable {
 
 	private static final long serialVersionUID = 384505554762996035L;
-	
+
 	private final Modular modular;
 
 	protected Modul(Modular modular) {
@@ -19,10 +19,6 @@ public abstract class Modul implements Entity, Constructable, Harmable {
 				destruct();
 			}
 		});
-	}
-
-	@Override
-	public void construct() {
 		modular.getModules().add(this);
 	}
 

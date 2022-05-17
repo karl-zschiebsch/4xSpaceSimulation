@@ -1,47 +1,97 @@
 package org.tss.controller;
 
-import org.tss.base.Constructable;
 import org.tss.unit.Unit;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
+import javafx.scene.Camera;
+import javafx.scene.ParallelCamera;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
 
-public class Player extends Controller implements Constructable {
-
-	public static final ObservableList<Player> PLAYERS = FXCollections.observableArrayList();
+public class Player extends Controller {
 
 	private static final long serialVersionUID = -5595285092934056297L;
 
-	public Player() {
-		units.addListener(new ListChangeListener<Unit>() {
+	protected final ObservableList<Unit> selected = FXCollections.observableArrayList();
 
-			@Override
-			public void onChanged(Change<? extends Unit> c) {
-				if (units.isEmpty()) {
-					destruct();
-				}
+	private final Stage stage;
+
+	public Player(Stage stage) {
+		this.stage = stage;
+	}
+
+	private final Camera camera = new ParallelCamera();
+
+	public void centralize(Point2D z) {
+		camera.setLayoutX(z.getX() - stage.getWidth() / 2);
+		camera.setLayoutY(z.getY() - stage.getHeight() / 2);
+	}
+
+	public EventHandler<? super KeyEvent> getKeyHandle() {
+		return e -> {
+			switch (e.getCode()) {
+			case W:
+				camera.setLayoutY(camera.getLayoutY() - 10);
+				break;
+			case A:
+				camera.setLayoutX(camera.getLayoutX() - 10);
+				break;
+			case S:
+				camera.setLayoutY(camera.getLayoutY() + 10);
+				break;
+			case D:
+				camera.setLayoutX(camera.getLayoutX() + 10);
+				break;
+			default:
+				break;
 			}
-
-		});
-		construct();
-	}
-	
-	@Override
-	public void update(double deltaT) {
-		for (int i = 0; i < getUnits().size(); i++) {
-			getUnits().get(i).update(deltaT);
-		}
+		};
 	}
 
-	@Override
-	public void construct() {
-		PLAYERS.add(this);
+	private int s = 0;
+
+	public EventHandler<? super MouseEvent> getMouseHandle() {
+		return e -> {
+			switch (e.getButton()) {
+			case PRIMARY:
+
+				break;
+			case SECONDARY:
+				for (Unit unit : selected) {
+					unit.setTarget(
+							new Point2D(e.getSceneX() + camera.getLayoutX(), e.getSceneY() + camera.getLayoutY()));
+				}
+				break;
+			case MIDDLE:
+
+				break;
+			case FORWARD:
+				if (selected.isEmpty())
+					break;
+				s = (selected.size() - 1 == s) ? 0 : s + 1;
+				centralize(selected.get(s).getPosition());
+				break;
+			case BACK:
+				if (selected.isEmpty())
+					break;
+				s = (0 == s) ? selected.size() - 1 : s - 1;
+				centralize(selected.get(s).getPosition());
+				break;
+			default:
+				break;
+			}
+		};
 	}
 
-	@Override
-	public void destruct() {
-		PLAYERS.remove(this);
+	public ObservableList<Unit> getSelected() {
+		return selected;
 	}
 
+	public Camera getCamera() {
+		return camera;
+	}
 }

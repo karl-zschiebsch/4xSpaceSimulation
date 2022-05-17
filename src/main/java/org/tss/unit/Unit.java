@@ -3,9 +3,9 @@ package org.tss.unit;
 import org.tss.base.ModalDoubleValue;
 import org.tss.base.SpaceObject;
 import org.tss.controller.Controller;
+import org.tss.controller.Player;
 
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
+import javafx.scene.input.MouseEvent;
 
 public abstract class Unit extends SpaceObject implements Harmable {
 
@@ -13,21 +13,27 @@ public abstract class Unit extends SpaceObject implements Harmable {
 
 	protected Unit(Controller controller) {
 		super(controller);
-
-		Polygon poly = new Polygon(0, 0, 60, 50, -60, 50);
-		poly.setFill(Color.BLUE);
-		getChildren().add(poly);
+		getController().getUnits().add(this);
 
 		hitPoints.addListener((observable, o, n) -> {
 			if (n.doubleValue() <= 0) {
 				destruct();
 			}
 		});
-	}
-
-	@Override
-	public void construct() {
-		getController().getUnits().add(this);
+		addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
+			if (getController() instanceof Player) {
+				Player player = (Player) getController();
+				if (e.getClickCount() == 2) {
+					player.centralize(getPosition());
+				}
+				if (!e.isShiftDown()) {
+					player.getSelected().clear();
+				}
+				if (player.getSelected().contains(this))
+					return;
+				player.getSelected().add(this);
+			}
+		});
 	}
 
 	@Override

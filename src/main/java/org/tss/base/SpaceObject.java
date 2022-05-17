@@ -1,12 +1,22 @@
 package org.tss.base;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.hypot;
+import static java.lang.Math.max;
+import static java.lang.Math.signum;
+import static java.lang.Math.sin;
+import static java.lang.Math.toDegrees;
+import static java.lang.Math.toRadians;
+
 import org.tss.controller.Controller;
 import org.tss.map.Map;
 
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 
-public abstract class SpaceObject extends Pane implements Entity, Constructable, Placeable {
+public abstract class SpaceObject extends Pane implements Entity, Destructable, Placeable {
 
 	private static final long serialVersionUID = 2581581743285122661L;
 
@@ -14,8 +24,6 @@ public abstract class SpaceObject extends Pane implements Entity, Constructable,
 
 	protected SpaceObject(Controller controller) {
 		this.controller = controller;
-
-		construct();
 	}
 
 	private Map map;
@@ -23,8 +31,8 @@ public abstract class SpaceObject extends Pane implements Entity, Constructable,
 	@Override
 	public void place(Map map, double x, double y) {
 		this.map = map;
-		setLayoutX(x);
-		setLayoutY(y);
+		setLayoutX(x + getWidth() / 2);
+		setLayoutY(y + getHeight() / 2);
 		map.getObjects().add(this);
 	}
 
@@ -34,7 +42,7 @@ public abstract class SpaceObject extends Pane implements Entity, Constructable,
 	}
 
 	public Point2D getPosition() {
-		return new Point2D(getLayoutX(), getLayoutY());
+		return new Point2D(getLayoutX() + getWidth() / 2, getLayoutY() + getHeight() / 2);
 	}
 
 	private Point2D target;
@@ -48,32 +56,27 @@ public abstract class SpaceObject extends Pane implements Entity, Constructable,
 	}
 
 	public void move(double deltaT) {
-		double difX = getTarget().getX() - getPosition().getX();
-		double difY = getTarget().getY() - getPosition().getY();
-
-		double length = Math.hypot(difX, difY);
-
-		if (length > Math.max(deltaT, 10)) {
+		double difX = getPosition().getX() - getTarget().getX();
+		double difY = getPosition().getY() - getTarget().getY();
+		double length = hypot(difX, difY);
+		if (length > max(deltaT, 5)) {
 			double tem = deltaT * 20;
 			if (tem >= length) {
 				tem = length;
 			}
-			setLayoutX(getLayoutX() + Math.sin(getRotate() / 180 * Math.PI) * tem);
-			setLayoutY(getLayoutY() + -Math.cos(getRotate() / 180 * Math.PI) * tem);
+			setLayoutX(getLayoutX() + sin(toRadians(getRotate())) * tem);
+			setLayoutY(getLayoutY() + -cos(toRadians(getRotate())) * tem);
 		} else {
 			setTarget(null);
 		}
 	}
 
 	public void rotate(double deltaT) {
-		double difX = getTarget().getX() - getPosition().getX();
-		double difY = getTarget().getY() - getPosition().getY();
-
-		double alpha = -Math.atan2(-difY, difX) * 180 / Math.PI + 90;
-		double length = Math.hypot(difX, difY);
-
-		if (length > Math.max(deltaT, 10)) {
-
+		double difX = getPosition().getX() - getTarget().getX();
+		double difY = getPosition().getY() - getTarget().getY();
+		double alpha = -toDegrees(atan2(difX, difY));
+		double length = hypot(difX, difY);
+		if (length > max(deltaT, 5)) {
 			double difR = alpha - getRotate();
 			if (difR > 180) {
 				difR -= 360;
@@ -83,13 +86,18 @@ public abstract class SpaceObject extends Pane implements Entity, Constructable,
 			}
 			if (difR > .5 || difR < -.5) {
 				double ang = deltaT * 20;
-				if (ang > Math.abs(difR)) {
+				if (ang > abs(difR)) {
 					setRotate(getRotate() + difR);
 				} else {
-					setRotate(getRotate() + Math.signum(difR) * ang);
+					setRotate(getRotate() + signum(difR) * ang);
 				}
 			}
 		}
+	}
+
+	@Override
+	public String toString() {
+		return getTarget() + " :: " + getPosition() + " :: " + getRotate();
 	}
 
 	public Controller getController() {
