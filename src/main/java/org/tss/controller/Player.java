@@ -14,14 +14,18 @@ import javafx.stage.Stage;
 
 public class Player extends Controller {
 
-	private static final long serialVersionUID = -5595285092934056297L;
-
 	protected final ObservableList<Unit> selected = FXCollections.observableArrayList();
 
 	private final Stage stage;
 
 	public Player(Stage stage) {
 		this.stage = stage;
+
+		try {
+			setMainController(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	private final Camera camera = new ParallelCamera();
@@ -62,7 +66,7 @@ public class Player extends Controller {
 				break;
 			case SECONDARY:
 				for (Unit unit : selected) {
-					unit.setTarget(
+					unit.setDestination(
 							new Point2D(e.getSceneX() + camera.getLayoutX(), e.getSceneY() + camera.getLayoutY()));
 				}
 				break;

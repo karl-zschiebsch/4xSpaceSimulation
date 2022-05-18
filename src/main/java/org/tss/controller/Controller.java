@@ -1,22 +1,19 @@
 package org.tss.controller;
 
 import org.tss.base.Destructable;
-import org.tss.base.Entity;
 import org.tss.unit.Unit;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-public abstract class Controller implements Entity, Destructable {
-
-	private static final long serialVersionUID = -3875467935907735000L;
+public class Controller implements Destructable {
 
 	public static final ObservableList<Controller> CONTOLLER = FXCollections.observableArrayList();
 
 	protected final ObservableList<Unit> units = FXCollections.observableArrayList();
 
-	protected Controller() {
+	public Controller() {
 		units.addListener(new ListChangeListener<Unit>() {
 
 			@Override
@@ -31,13 +28,6 @@ public abstract class Controller implements Entity, Destructable {
 	}
 
 	@Override
-	public void update(double deltaT) {
-		for (int i = 0; i < getUnits().size(); i++) {
-			getUnits().get(i).update(deltaT);
-		}
-	}
-
-	@Override
 	public void destruct() {
 		CONTOLLER.remove(this);
 	}
@@ -46,4 +36,19 @@ public abstract class Controller implements Entity, Destructable {
 		return units;
 	}
 
+	private static Player main;
+
+	protected void setMainController(Player player) throws Exception {
+		if (main != null)
+			throw new Exception("Only one main controller is allowed");
+		main = player;
+	}
+
+	public Player getMainController() {
+		return main;
+	}
+
+	public boolean isMainController() {
+		return this == main;
+	}
 }

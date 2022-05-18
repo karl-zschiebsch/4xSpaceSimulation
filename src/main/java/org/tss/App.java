@@ -1,8 +1,10 @@
 package org.tss;
 
+import org.tss.controller.Controller;
 import org.tss.controller.Player;
 import org.tss.map.Map;
 import org.tss.unit.linear.Linear;
+import org.tss.unit.modular.Modular;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -38,32 +40,35 @@ public class App extends Application {
 					double frameRate = 1_000_000_000 / elapsedNanosPerFrame;
 					double deltaT = frameRate / 10_000;
 
-					for (int i = 0; i < Player.CONTOLLER.size(); i++) {
-						Player.CONTOLLER.get(i).update(deltaT);
+					for (int i = 0; i < map.getObjects().size(); i++) {
+						map.getObjects().get(i).update(deltaT);
 					}
 				}
 			}
 		}.start();
 	}
 
+	Group group = new Group();
+	Map map = new Map(group, 1080, 720);
+
 	@Override
 	public void start(Stage stage) throws Exception {
 
 		BorderPane pane = new BorderPane();
 
-		Group group = new Group();
-		for (int x = 0; x < 1_200; x += 100) {
-			group.getChildren().add(new Line(x, 0, x, 720));
+		for (int x = 100; x < 1_100; x += 100) {
+			group.getChildren().add(new Line(x, 0, x, 800));
 		}
-		for (int y = 0; y < 800; y += 100) {
-			group.getChildren().add(new Line(0, y, 1080, y));
+		for (int y = 100; y < 800; y += 100) {
+			group.getChildren().add(new Line(0, y, 1200, y));
 		}
 
-		Map map = new Map(group, 1080, 720);
 		Player player = new Player(stage);
 
-		new Linear(player).place(map, 100, 200);
-		new Linear(player).place(map, 300, 500);
+		new Modular(player).place(map, 100, 200);
+		new Modular(player).place(map, 300, 500);
+		new Linear(new Controller() {
+		}).place(map, 600, 200);
 
 		pane.setCenter(map);
 

@@ -21,7 +21,7 @@ public abstract class Unit extends SpaceObject implements Harmable {
 			}
 		});
 		addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-			if (getController() instanceof Player) {
+			if (getController().isMainController()) {
 				Player player = (Player) getController();
 				if (e.getClickCount() == 2) {
 					player.centralize(getPosition());
@@ -32,12 +32,17 @@ public abstract class Unit extends SpaceObject implements Harmable {
 				if (player.getSelected().contains(this))
 					return;
 				player.getSelected().add(this);
+			} else {
+				for (Unit unit : getController().getMainController().getSelected()) {
+					unit.setTarget(this);
+				}
 			}
 		});
 	}
 
 	@Override
 	public void destruct() {
+		super.destruct();
 		getController().getUnits().remove(this);
 	}
 

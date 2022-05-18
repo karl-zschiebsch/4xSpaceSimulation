@@ -12,11 +12,13 @@ import static java.lang.Math.toRadians;
 
 import org.tss.controller.Controller;
 import org.tss.map.Map;
+import org.tss.map.Placeable;
+import org.tss.unit.Unit;
 
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 
-public abstract class SpaceObject extends Pane implements Entity, Destructable, Placeable {
+public abstract class SpaceObject extends Pane implements Entity, Placeable, Destructable {
 
 	private static final long serialVersionUID = 2581581743285122661L;
 
@@ -29,15 +31,16 @@ public abstract class SpaceObject extends Pane implements Entity, Destructable, 
 	private Map map;
 
 	@Override
-	public void place(Map map, double x, double y) {
+	public void place(Map map, double x, double y, double r) {
 		this.map = map;
 		setLayoutX(x + getWidth() / 2);
 		setLayoutY(y + getHeight() / 2);
+		setRotate(r);
 		map.getObjects().add(this);
 	}
 
 	@Override
-	public void remove() {
+	public void destruct() {
 		map.getObjects().remove(this);
 	}
 
@@ -45,35 +48,48 @@ public abstract class SpaceObject extends Pane implements Entity, Destructable, 
 		return new Point2D(getLayoutX() + getWidth() / 2, getLayoutY() + getHeight() / 2);
 	}
 
-	private Point2D target;
+	private Point2D destination;
 
-	public Point2D getTarget() {
-		return target == null ? getPosition() : target;
+	public Point2D getDestination() {
+		return destination == null ? getPosition() : destination;
 	}
 
-	public void setTarget(Point2D target) {
+	public void setDestination(Point2D destination) {
+		this.destination = destination;
+	}
+
+	private Unit target;
+
+	public Unit getTarget() {
+		if (target != null)
+			if (target.getHitPoints() <= 0)
+				target = null;
+		return target;
+	}
+
+	public void setTarget(Unit target) {
 		this.target = target;
 	}
 
 	public void move(double deltaT) {
-		double difX = getPosition().getX() - getTarget().getX();
-		double difY = getPosition().getY() - getTarget().getY();
+		double difX = getPosition().getX() - getDestination().getX();
+		double difY = getPosition().getY() - getDestination().getY();
 		double length = hypot(difX, difY);
 		if (length > max(deltaT, 5)) {
-			double tem = deltaT * 20;
+			double tem = deltaT * 100;
 			if (tem >= length) {
 				tem = length;
 			}
 			setLayoutX(getLayoutX() + sin(toRadians(getRotate())) * tem);
 			setLayoutY(getLayoutY() + -cos(toRadians(getRotate())) * tem);
 		} else {
-			setTarget(null);
+			setDestination(null);
 		}
 	}
 
 	public void rotate(double deltaT) {
-		double difX = getPosition().getX() - getTarget().getX();
-		double difY = getPosition().getY() - getTarget().getY();
+		double difX = getPosition().getX() - getDestination().getX();
+		double difY = getPosition().getY() - getDestination().getY();
 		double alpha = -toDegrees(atan2(difX, difY));
 		double length = hypot(difX, difY);
 		if (length > max(deltaT, 5)) {
@@ -85,7 +101,7 @@ public abstract class SpaceObject extends Pane implements Entity, Destructable, 
 				difR += 360;
 			}
 			if (difR > .5 || difR < -.5) {
-				double ang = deltaT * 20;
+				double ang = deltaT * 40;
 				if (ang > abs(difR)) {
 					setRotate(getRotate() + difR);
 				} else {
@@ -95,9 +111,8 @@ public abstract class SpaceObject extends Pane implements Entity, Destructable, 
 		}
 	}
 
-	@Override
-	public String toString() {
-		return getTarget() + " :: " + getPosition() + " :: " + getRotate();
+	public boolean inside(SpaceObject o) {
+		return o.getBoundsInParent().contains(getPosition());
 	}
 
 	public Controller getController() {

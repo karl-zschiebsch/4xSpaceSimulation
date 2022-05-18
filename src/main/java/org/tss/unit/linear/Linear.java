@@ -13,7 +13,7 @@ public class Linear extends Unit {
 	public Linear(Controller controller) {
 		super(controller);
 
-		Polygon poly = new Polygon(20,0,40,60,0,60);
+		Polygon poly = new Polygon(20, 0, 40, 60, 0, 60);
 		poly.setFill(Color.BLUE);
 		getChildren().add(poly);
 	}
@@ -22,11 +22,14 @@ public class Linear extends Unit {
 	public void update(double deltaT) {
 		rotate(deltaT);
 		move(deltaT);
+		if (getTarget() != null) {
+
+		}
 	}
 
 	@Override
 	public void harm(double value) {
-		hitPoints.set(value);
+		hitPoints.set(hitPoints.get() - value);
 	}
 
 }

@@ -13,13 +13,13 @@ public abstract class Modul implements Entity, Destructable, Harmable {
 
 	protected Modul(Modular modular) {
 		this.modular = modular;
+		modular.getModules().add(this);
 
 		hitPoints.addListener((observable, o, n) -> {
 			if (n.doubleValue() <= 0) {
 				destruct();
 			}
 		});
-		modular.getModules().add(this);
 	}
 
 	@Override
@@ -40,5 +40,9 @@ public abstract class Modul implements Entity, Destructable, Harmable {
 
 	public final double getHitPoints() {
 		return hitPoints.get();
+	}
+
+	public Modular getModular() {
+		return modular;
 	}
 }
