@@ -1,6 +1,6 @@
 package org.tss.projectile;
 
-import org.tss.base.ModalDoubleValue;
+import org.tss.base.MinmaxDoubleValue;
 import org.tss.base.SpaceObject;
 import org.tss.controller.Controller;
 import org.tss.unit.Harmable;
@@ -27,20 +27,20 @@ public abstract class Projectile extends SpaceObject {
 			SpaceObject object = getMap().getObjects().get(i);
 			if (object instanceof Harmable && object.getController() != getController()) {
 				if (inside(object)) {
-					((Harmable) object).harm(1);
+					((Harmable) object).harm(.4);
 					destruct();
 				}
 			}
 		}
 	}
 
-	protected ModalDoubleValue fuelPoints = new ModalDoubleValue(1);
+	protected MinmaxDoubleValue fuelPoints = new MinmaxDoubleValue(1);
 
 	public final void setFuelPoints(double value) {
-		fuelPoints.set(value);
+		fuelPoints.setCur(value);
 	}
 
 	public final double getFuelPoints() {
-		return fuelPoints.get();
+		return fuelPoints.getCur();
 	}
 }

@@ -20,16 +20,15 @@ public class Linear extends Unit {
 
 	@Override
 	public void update(double deltaT) {
+		if (getTarget() != null)
+			setDestination(getTarget().getPosition());
 		rotate(deltaT);
 		move(deltaT);
-		if (getTarget() != null) {
-
-		}
 	}
 
 	@Override
 	public void harm(double value) {
-		hitPoints.set(hitPoints.get() - value);
+		setHitPoints(getHitPoints() - damagingHull(damagingShields(value)));
 	}
 
 }

@@ -2,8 +2,8 @@ package org.tss.unit.modular;
 
 import java.util.function.Function;
 
+import org.tss.base.Constructor;
 import org.tss.controller.Controller;
-import org.tss.projectile.Projectile;
 import org.tss.projectile.Rocket;
 import org.tss.unit.Unit;
 
@@ -45,12 +45,12 @@ public class Modular extends Unit {
 		getChildren().add(poly);
 
 		new Engine(this, 1);
-		new Weapon(this, new Function<Controller, Projectile>() {
+		new Weapon(this, new Constructor<Rocket>(new Function<Controller, Rocket>() {
 			@Override
-			public Projectile apply(Controller t) {
+			public Rocket apply(Controller t) {
 				return new Rocket(t);
 			}
-		}, 0.8, 1);
+		}), 0.8, 1);
 	}
 
 	@Override
@@ -63,7 +63,7 @@ public class Modular extends Unit {
 	@Override
 	public void harm(double value) {
 		Modul modul = modules.get((int) (Math.random() * modules.size()));
-		modul.setHitPoints(modul.getHitPoints() - value);
+		modul.setHitPoints(modul.getHitPoints() - damagingHull(damagingShields(value)));
 	}
 
 	public ObservableList<Modul> getModules() {

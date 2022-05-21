@@ -1,6 +1,6 @@
 package org.tss.unit;
 
-import org.tss.base.ModalDoubleValue;
+import org.tss.base.MinmaxDoubleValue;
 import org.tss.base.SpaceObject;
 import org.tss.controller.Controller;
 import org.tss.controller.Player;
@@ -46,33 +46,43 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		getController().getUnits().remove(this);
 	}
 
-	protected ModalDoubleValue hitPoints = new ModalDoubleValue(1);
+	protected double damagingShields(double damage) {
+		double excess = damage - getShieldPoints();
+		setShieldPoints(getShieldPoints() - damage);
+		return excess < 0 ? 0 : excess;
+	}
+
+	protected double damagingHull(double damage) {
+		return damage / getArmorPoints();
+	}
+
+	protected MinmaxDoubleValue hitPoints = new MinmaxDoubleValue(1);
 
 	public final void setHitPoints(double value) {
-		hitPoints.set(value);
+		hitPoints.setCur(value);
 	}
 
 	public final double getHitPoints() {
-		return hitPoints.get();
+		return hitPoints.getCur();
 	}
 
-	protected ModalDoubleValue armorPoints = new ModalDoubleValue(1);
+	protected MinmaxDoubleValue armorPoints = new MinmaxDoubleValue(1);
 
 	public final void setArmorPoints(double value) {
-		armorPoints.set(value);
+		armorPoints.setCur(value);
 	}
 
 	public final double getArmorPoints() {
-		return armorPoints.get();
+		return armorPoints.getCur();
 	}
 
-	protected ModalDoubleValue shieldPoints = new ModalDoubleValue(1);
+	protected MinmaxDoubleValue shieldPoints = new MinmaxDoubleValue(1);
 
 	public final void setShieldPoints(double value) {
-		shieldPoints.set(value);
+		shieldPoints.setCur(value);
 	}
 
 	public final double getShieldPoints() {
-		return shieldPoints.get();
+		return shieldPoints.getCur();
 	}
 }

@@ -1,5 +1,10 @@
 package org.tss.controller;
 
+import static javafx.scene.input.KeyCode.*;
+
+import java.util.EnumMap;
+import java.util.function.Consumer;
+
 import org.tss.unit.Unit;
 
 import javafx.collections.FXCollections;
@@ -8,11 +13,18 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Camera;
 import javafx.scene.ParallelCamera;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
 public class Player extends Controller {
+
+	protected static final EnumMap<KeyCode, Consumer<Player>> SHORTCUTS = new EnumMap<>(KeyCode.class);
+	static {
+		SHORTCUTS.put(A, c -> c.selected.setAll(c.units));
+		SHORTCUTS.put(S, c -> c.selected.forEach(u -> u.setDestination(null)));
+	}
 
 	protected final ObservableList<Unit> selected = FXCollections.observableArrayList();
 
@@ -37,22 +49,27 @@ public class Player extends Controller {
 
 	public EventHandler<? super KeyEvent> getKeyHandle() {
 		return e -> {
-			switch (e.getCode()) {
-			case W:
-				camera.setLayoutY(camera.getLayoutY() - 10);
-				break;
-			case A:
-				camera.setLayoutX(camera.getLayoutX() - 10);
-				break;
-			case S:
-				camera.setLayoutY(camera.getLayoutY() + 10);
-				break;
-			case D:
-				camera.setLayoutX(camera.getLayoutX() + 10);
-				break;
-			default:
-				break;
-			}
+			if (e.isControlDown()) {
+				Consumer<Player> c = SHORTCUTS.get(e.getCode());
+				if (c != null)
+					c.accept(this);
+			} else
+				switch (e.getCode()) {
+				case W:
+					camera.setLayoutY(camera.getLayoutY() - 10);
+					break;
+				case A:
+					camera.setLayoutX(camera.getLayoutX() - 10);
+					break;
+				case S:
+					camera.setLayoutY(camera.getLayoutY() + 10);
+					break;
+				case D:
+					camera.setLayoutX(camera.getLayoutX() + 10);
+					break;
+				default:
+					break;
+				}
 		};
 	}
 

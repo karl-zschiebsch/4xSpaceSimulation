@@ -4,42 +4,22 @@ import com.sun.javafx.binding.ExpressionHelper;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableDoubleValue;
-import javafx.beans.value.WritableDoubleValue;
+import javafx.beans.value.ObservableValue;
 
-public class ModalDoubleValue implements ObservableDoubleValue, WritableDoubleValue {
+public class MinmaxDoubleValue implements ObservableValue<Number> {
 
 	private ExpressionHelper<Number> helper = null;
 
-	private double cur, max;
+	private double cur, min, max;
 
-	public ModalDoubleValue(double value) {
+	public MinmaxDoubleValue(double value) {
 		cur = value;
 		max = value;
+		min = 0;
 	}
 
-	public ModalDoubleValue() {
+	public MinmaxDoubleValue() {
 		this(0);
-	}
-
-	@Override
-	public int intValue() {
-		return (int) get();
-	}
-
-	@Override
-	public long longValue() {
-		return (long) get();
-	}
-
-	@Override
-	public float floatValue() {
-		return (float) get();
-	}
-
-	@Override
-	public double doubleValue() {
-		return get();
 	}
 
 	@Override
@@ -71,22 +51,11 @@ public class ModalDoubleValue implements ObservableDoubleValue, WritableDoubleVa
 		ExpressionHelper.fireValueChangedEvent(helper);
 	}
 
-	@Override
-	public double get() {
-		return cur;
-	}
-
-	@Override
-	public final void set(double value) {
+	protected final void set(double value) {
 		var temp = cur;
-		cur = value > max ? max : value;
+		cur = Math.min(Math.max(value, min), max);
 		if (temp != cur)
 			fireValueChangedEvent();
-	}
-
-	@Override
-	public void setValue(Number value) {
-		set((value == null) ? 0 : value.doubleValue());
 	}
 
 	public void setCur(double value) {
@@ -103,5 +72,21 @@ public class ModalDoubleValue implements ObservableDoubleValue, WritableDoubleVa
 
 	public double getMax() {
 		return max;
+	}
+
+	public boolean isMax() {
+		return cur == max;
+	}
+
+	public void setMin(double value) {
+		min = value;
+	}
+
+	public double getMin() {
+		return min;
+	}
+
+	public boolean isMin() {
+		return cur == min;
 	}
 }

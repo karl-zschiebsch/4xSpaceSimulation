@@ -19,13 +19,11 @@ public class Stack<E extends Linear> extends Unit {
 
 	@Override
 	public void update(double deltaT) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void harm(double value) {
-		hitPoints.set(hitPoints.get() - value);
+		hitPoints.setCur(hitPoints.getCur() - value);
 	}
 
 	public final void add(double count) {
@@ -35,7 +33,7 @@ public class Stack<E extends Linear> extends Unit {
 
 	public void pack(Stack<E> stack) {
 		if (stack.size() > 0)
-			add(stack.hitPoints.get());
+			add(stack.hitPoints.getCur());
 		stack.destruct();
 	}
 
@@ -47,12 +45,12 @@ public class Stack<E extends Linear> extends Unit {
 		if (size() < 2)
 			return null;
 
-		double n = hitPoints.get() / 2;
+		double n = hitPoints.getCur() / 2;
 		remove(n);
 		return new Stack<>(getController(), n);
 	}
 
 	public int size() {
-		return (int) Math.ceil(hitPoints.get());
+		return (int) Math.ceil(hitPoints.getCur());
 	}
 }

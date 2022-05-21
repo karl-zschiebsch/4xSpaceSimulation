@@ -2,7 +2,7 @@ package org.tss.unit.modular;
 
 import org.tss.base.Destructable;
 import org.tss.base.Entity;
-import org.tss.base.ModalDoubleValue;
+import org.tss.base.MinmaxDoubleValue;
 import org.tss.unit.Harmable;
 
 public abstract class Modul implements Entity, Destructable, Harmable {
@@ -29,17 +29,17 @@ public abstract class Modul implements Entity, Destructable, Harmable {
 
 	@Override
 	public void harm(double value) {
-		hitPoints.set(hitPoints.get() - value);
+		hitPoints.setCur(hitPoints.getCur() - value);
 	};
 
-	protected ModalDoubleValue hitPoints = new ModalDoubleValue(1);
+	protected MinmaxDoubleValue hitPoints = new MinmaxDoubleValue(1);
 
 	public final void setHitPoints(double value) {
-		hitPoints.set(value);
+		hitPoints.setCur(value);
 	}
 
 	public final double getHitPoints() {
-		return hitPoints.get();
+		return hitPoints.getCur();
 	}
 
 	public Modular getModular() {
