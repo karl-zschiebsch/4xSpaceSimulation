@@ -9,8 +9,14 @@ public abstract class Projectile extends SpaceObject {
 
 	private static final long serialVersionUID = -5682494091592111719L;
 
-	protected Projectile(Controller controller) {
+	private final double damage, speed, critChance, critDamage;
+
+	protected Projectile(Controller controller, double damage, double speed, double critChance, double critDamage) {
 		super(controller);
+		this.damage = damage;
+		this.speed = speed;
+		this.critChance = critChance;
+		this.critDamage = critDamage;
 
 		fuelPoints.addListener((observable, o, n) -> {
 			if (n.doubleValue() <= 0) {
@@ -27,11 +33,27 @@ public abstract class Projectile extends SpaceObject {
 			SpaceObject object = getMap().getObjects().get(i);
 			if (object instanceof Harmable && object.getController() != getController()) {
 				if (inside(object)) {
-					((Harmable) object).harm(.4);
+					double value = calc();
+					((Harmable) object).harm(value);
+					System.out.println(value);
 					destruct();
 				}
 			}
 		}
+	}
+
+	protected double calc() {
+		return ((critChance % 1) > Math.random() ? damage * critDamage : damage) * Math.pow(2, (int) critChance + 1);
+	}
+
+	@Override
+	public void move(double deltaT) {
+		super.move(deltaT * speed);
+	}
+
+	@Override
+	public void rotate(double deltaT) {
+		super.rotate(deltaT * speed);
 	}
 
 	protected MinmaxDoubleValue fuelPoints = new MinmaxDoubleValue(1);

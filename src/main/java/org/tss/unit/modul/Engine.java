@@ -1,4 +1,6 @@
-package org.tss.unit.modular;
+package org.tss.unit.modul;
+
+import org.tss.unit.ship.Ship;
 
 public class Engine extends Modul {
 
@@ -6,8 +8,8 @@ public class Engine extends Modul {
 
 	private final double speed;
 
-	protected Engine(Modular modular, double speed) {
-		super(modular);
+	public Engine(Ship ship, double speed) {
+		super(ship);
 		this.speed = speed;
 	}
 

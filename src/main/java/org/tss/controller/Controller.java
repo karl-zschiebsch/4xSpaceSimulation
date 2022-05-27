@@ -1,6 +1,7 @@
 package org.tss.controller;
 
 import org.tss.base.Destructable;
+import org.tss.map.Map;
 import org.tss.unit.Unit;
 
 import javafx.collections.FXCollections;
@@ -9,11 +10,14 @@ import javafx.collections.ObservableList;
 
 public class Controller implements Destructable {
 
-	public static final ObservableList<Controller> CONTOLLER = FXCollections.observableArrayList();
-
 	protected final ObservableList<Unit> units = FXCollections.observableArrayList();
 
-	public Controller() {
+	private final Map map;
+
+	public Controller(Map map) {
+		map.getControllers().add(this);
+
+		this.map = map;
 		units.addListener(new ListChangeListener<Unit>() {
 
 			@Override
@@ -24,12 +28,11 @@ public class Controller implements Destructable {
 			}
 
 		});
-		CONTOLLER.add(this);
 	}
 
 	@Override
 	public void destruct() {
-		CONTOLLER.remove(this);
+		map.getControllers().remove(this);
 	}
 
 	public ObservableList<Unit> getUnits() {
@@ -50,5 +53,9 @@ public class Controller implements Destructable {
 
 	public boolean isMainController() {
 		return this == main;
+	}
+
+	public Map getMap() {
+		return map;
 	}
 }

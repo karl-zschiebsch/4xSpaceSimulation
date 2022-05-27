@@ -5,6 +5,7 @@ import org.tss.base.SpaceObject;
 import org.tss.controller.Controller;
 import org.tss.controller.Player;
 
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 public abstract class Unit extends SpaceObject implements Harmable {
@@ -16,26 +17,21 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		getController().getUnits().add(this);
 
 		hitPoints.addListener((observable, o, n) -> {
-			if (n.doubleValue() <= 0) {
+			if (n.doubleValue() <= 0)
 				destruct();
-			}
 		});
 		addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
-			if (getController().isMainController()) {
+			if (e.getButton() == MouseButton.PRIMARY && getController().isMainController()) {
 				Player player = (Player) getController();
-				if (e.getClickCount() == 2) {
+				if (e.getClickCount() == 2)
 					player.centralize(getPosition());
-				}
-				if (!e.isShiftDown()) {
+				if (!e.isShiftDown())
 					player.getSelected().clear();
-				}
-				if (player.getSelected().contains(this))
-					return;
-				player.getSelected().add(this);
-			} else {
-				for (Unit unit : getController().getMainController().getSelected()) {
+				if (!player.getSelected().contains(this))
+					player.getSelected().add(this);
+			} else if (e.getButton() == MouseButton.SECONDARY && !getController().isMainController()) {
+				for (Unit unit : getController().getMainController().getSelected())
 					unit.setTarget(this);
-				}
 			}
 		});
 	}

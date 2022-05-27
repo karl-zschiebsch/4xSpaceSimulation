@@ -33,8 +33,8 @@ public abstract class SpaceObject extends Pane implements Entity, Placeable, Des
 	@Override
 	public void place(Map map, double x, double y, double r) {
 		this.map = map;
-		setLayoutX(x + getWidth() / 2);
-		setLayoutY(y + getHeight() / 2);
+		setLayoutX(x - getWidth() / 2);
+		setLayoutY(y - getHeight() / 2);
 		setRotate(r);
 		map.getObjects().add(this);
 	}
@@ -76,7 +76,7 @@ public abstract class SpaceObject extends Pane implements Entity, Placeable, Des
 		double difY = getPosition().getY() - getDestination().getY();
 		double length = hypot(difX, difY);
 		if (length > max(deltaT, 5)) {
-			double tem = deltaT * 100;
+			double tem = deltaT * 64;
 			if (tem >= length) {
 				tem = length;
 			}
@@ -101,7 +101,7 @@ public abstract class SpaceObject extends Pane implements Entity, Placeable, Des
 				difR += 360;
 			}
 			if (difR > .5 || difR < -.5) {
-				double ang = deltaT * 40;
+				double ang = deltaT * 16;
 				if (ang > abs(difR)) {
 					setRotate(getRotate() + difR);
 				} else {
@@ -119,6 +119,7 @@ public abstract class SpaceObject extends Pane implements Entity, Placeable, Des
 		return controller;
 	}
 
+	@Override
 	public Map getMap() {
 		return map;
 	}

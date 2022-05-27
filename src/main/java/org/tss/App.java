@@ -3,8 +3,9 @@ package org.tss;
 import org.tss.controller.Controller;
 import org.tss.controller.Player;
 import org.tss.map.Map;
-import org.tss.unit.linear.Linear;
-import org.tss.unit.modular.Modular;
+import org.tss.unit.ship.Defender;
+import org.tss.unit.ship.Hunter;
+import org.tss.unit.ship.Squadron;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -63,12 +64,16 @@ public class App extends Application {
 			group.getChildren().add(new Line(0, y, 1200, y));
 		}
 
-		Player player = new Player(stage);
+		Player player = new Player(map);
 
-		new Modular(player).place(map, 100, 200);
-		new Modular(player).place(map, 300, 500);
-		new Linear(new Controller() {
-		}).place(map, 600, 200);
+		Squadron<Hunter> squad = new Squadron<>(player);
+		for (int i = 0; i < 3; i++) {
+			squad.getSubUnits().add(new Hunter(squad));
+		}
+		squad.place(map, 600, 200);
+		new Defender(player).place(map, 300, 500);
+
+		new Defender(new Controller(map)).place(map, 100, 200);
 
 		pane.setCenter(map);
 

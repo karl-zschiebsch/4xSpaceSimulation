@@ -1,56 +1,33 @@
-package org.tss.unit.modular;
+package org.tss.unit.ship;
 
-import java.util.function.Function;
+import java.util.ArrayList;
 
-import org.tss.base.Constructor;
 import org.tss.controller.Controller;
-import org.tss.projectile.Rocket;
 import org.tss.unit.Unit;
+import org.tss.unit.modul.Modul;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
 
-public class Modular extends Unit {
+public class Ship extends Unit {
 
 	private static final long serialVersionUID = 221341942869079545L;
 
 	private final ObservableList<Modul> modules = FXCollections.observableArrayList();
+	private final ArrayList<Modul> removed = new ArrayList<>();
 
-	public Modular(Controller controller) {
+	protected Ship(Controller controller) {
 		super(controller);
 		modules.addListener(new ListChangeListener<Modul>() {
-
 			@Override
 			public void onChanged(Change<? extends Modul> c) {
 				c.next();
-				int a = c.getAddedSize();
-				if (a > 0) {
-					hitPoints.setMax(hitPoints.getMax() + a);
-					hitPoints.setCur(hitPoints.getCur() + a);
-				}
+				removed.addAll(c.getRemoved());
 
-				int r = c.getRemovedSize();
-				if (r > 0) {
-					hitPoints.setCur(hitPoints.getCur() - r);
-					System.out.println(r);
-				}
+				setHitPoints(modules.size() / (modules.size() + removed.size()));
 			}
 		});
-
-		Polygon poly = new Polygon(20, 0, 40, 60, 0, 60);
-		poly.setFill(Color.RED);
-		getChildren().add(poly);
-
-		new Engine(this, 1);
-		new Weapon(this, new Constructor<Rocket>(new Function<Controller, Rocket>() {
-			@Override
-			public Rocket apply(Controller t) {
-				return new Rocket(t);
-			}
-		}), 0.8, 1);
 	}
 
 	@Override
@@ -62,6 +39,8 @@ public class Modular extends Unit {
 
 	@Override
 	public void harm(double value) {
+		if (modules.isEmpty())
+			return;
 		Modul modul = modules.get((int) (Math.random() * modules.size()));
 		modul.setHitPoints(modul.getHitPoints() - damagingHull(damagingShields(value)));
 	}

@@ -1,10 +1,12 @@
 package org.tss.controller;
 
-import static javafx.scene.input.KeyCode.*;
+import static javafx.scene.input.KeyCode.A;
+import static javafx.scene.input.KeyCode.S;
 
 import java.util.EnumMap;
 import java.util.function.Consumer;
 
+import org.tss.map.Map;
 import org.tss.unit.Unit;
 
 import javafx.collections.FXCollections;
@@ -16,7 +18,6 @@ import javafx.scene.ParallelCamera;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 
 public class Player extends Controller {
 
@@ -28,10 +29,8 @@ public class Player extends Controller {
 
 	protected final ObservableList<Unit> selected = FXCollections.observableArrayList();
 
-	private final Stage stage;
-
-	public Player(Stage stage) {
-		this.stage = stage;
+	public Player(Map map) {
+		super(map);
 
 		try {
 			setMainController(this);
@@ -43,11 +42,11 @@ public class Player extends Controller {
 	private final Camera camera = new ParallelCamera();
 
 	public void centralize(Point2D z) {
-		camera.setLayoutX(z.getX() - stage.getWidth() / 2);
-		camera.setLayoutY(z.getY() - stage.getHeight() / 2);
+		camera.setLayoutX(z.getX() - getMap().getWidth() / 2);
+		camera.setLayoutY(z.getY() - getMap().getHeight() / 2);
 	}
 
-	public EventHandler<? super KeyEvent> getKeyHandle() {
+	public EventHandler<KeyEvent> getKeyHandle() {
 		return e -> {
 			if (e.isControlDown()) {
 				Consumer<Player> c = SHORTCUTS.get(e.getCode());

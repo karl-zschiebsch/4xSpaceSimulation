@@ -6,35 +6,35 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-public class MinmaxDoubleValue implements ObservableValue<Number> {
+public class MinmaxDoubleValue implements ObservableValue<Double> {
 
-	private ExpressionHelper<Number> helper = null;
+	private ExpressionHelper<Double> helper = null;
 
 	private double cur, min, max;
 
+	public MinmaxDoubleValue(double cur, double min, double max) {
+		this.cur = cur;
+		this.min = min;
+		this.max = max;
+	}
+
 	public MinmaxDoubleValue(double value) {
-		cur = value;
-		max = value;
-		min = 0;
+		this(value, 0, value);
 	}
 
 	public MinmaxDoubleValue() {
-		this(0);
+		this.min = Double.NEGATIVE_INFINITY;
+		this.max = Double.POSITIVE_INFINITY;
 	}
 
 	@Override
-	public void addListener(ChangeListener<? super Number> listener) {
+	public void addListener(ChangeListener<? super Double> listener) {
 		helper = ExpressionHelper.addListener(helper, this, listener);
 	}
 
 	@Override
-	public void removeListener(ChangeListener<? super Number> listener) {
+	public void removeListener(ChangeListener<? super Double> listener) {
 		helper = ExpressionHelper.removeListener(helper, listener);
-	}
-
-	@Override
-	public Number getValue() {
-		return cur;
 	}
 
 	@Override
@@ -45,6 +45,11 @@ public class MinmaxDoubleValue implements ObservableValue<Number> {
 	@Override
 	public void removeListener(InvalidationListener listener) {
 		helper = ExpressionHelper.removeListener(helper, listener);
+	}
+
+	@Override
+	public Double getValue() {
+		return cur;
 	}
 
 	protected void fireValueChangedEvent() {
