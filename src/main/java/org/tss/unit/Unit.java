@@ -1,16 +1,25 @@
 package org.tss.unit;
 
+import java.util.ArrayList;
+
 import org.tss.base.MinmaxDoubleValue;
 import org.tss.base.SpaceObject;
 import org.tss.controller.Controller;
 import org.tss.controller.Player;
+import org.tss.unit.modul.Modul;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 public abstract class Unit extends SpaceObject implements Harmable {
 
 	private static final long serialVersionUID = 8147204360521291943L;
+
+	private final ObservableList<Modul> modules = FXCollections.observableArrayList();
+	private final ArrayList<Modul> removed = new ArrayList<>();
 
 	protected Unit(Controller controller) {
 		super(controller);
@@ -19,6 +28,15 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		hitPoints.addListener((observable, o, n) -> {
 			if (n.doubleValue() <= 0)
 				destruct();
+		});
+		modules.addListener(new ListChangeListener<Modul>() {
+			@Override
+			public void onChanged(Change<? extends Modul> c) {
+				c.next();
+				removed.addAll(c.getRemoved());
+
+				setHitPoints(modules.size() / (modules.size() + removed.size()));
+			}
 		});
 		addEventHandler(MouseEvent.MOUSE_CLICKED, e -> {
 			if (e.getButton() == MouseButton.PRIMARY && getController().isMainController()) {
@@ -37,9 +55,24 @@ public abstract class Unit extends SpaceObject implements Harmable {
 	}
 
 	@Override
+	public void update(double deltaT) {
+		for (int i = 0; i < modules.size(); i++) {
+			modules.get(i).update(deltaT);
+		}
+	}
+
+	@Override
 	public void destruct() {
 		super.destruct();
 		getController().getUnits().remove(this);
+	}
+
+	@Override
+	public void harm(double value) {
+		if (modules.isEmpty())
+			return;
+		Modul modul = modules.get((int) (Math.random() * modules.size()));
+		modul.setHitPoints(modul.getHitPoints() - damagingHull(damagingShields(value)));
 	}
 
 	protected double damagingShields(double damage) {
@@ -52,7 +85,7 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		return damage / getArmorPoints();
 	}
 
-	protected MinmaxDoubleValue hitPoints = new MinmaxDoubleValue(1);
+	public MinmaxDoubleValue hitPoints = new MinmaxDoubleValue(1);
 
 	public final void setHitPoints(double value) {
 		hitPoints.setCur(value);
@@ -62,7 +95,7 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		return hitPoints.getCur();
 	}
 
-	protected MinmaxDoubleValue armorPoints = new MinmaxDoubleValue(1);
+	public MinmaxDoubleValue armorPoints = new MinmaxDoubleValue(1);
 
 	public final void setArmorPoints(double value) {
 		armorPoints.setCur(value);
@@ -72,7 +105,7 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		return armorPoints.getCur();
 	}
 
-	protected MinmaxDoubleValue shieldPoints = new MinmaxDoubleValue(1);
+	public MinmaxDoubleValue shieldPoints = new MinmaxDoubleValue(0);
 
 	public final void setShieldPoints(double value) {
 		shieldPoints.setCur(value);
@@ -80,5 +113,9 @@ public abstract class Unit extends SpaceObject implements Harmable {
 
 	public final double getShieldPoints() {
 		return shieldPoints.getCur();
+	}
+
+	public ObservableList<Modul> getModules() {
+		return modules;
 	}
 }

@@ -12,7 +12,7 @@ public class Rocket extends Projectile implements Harmable {
 	private static final long serialVersionUID = 1L;
 
 	public Rocket(Controller controller) {
-		super(controller, 1.2, 0.9, 0.3, 2);
+		super(controller, 0.7, 0.9, 0.3, 2);
 
 		hitPoints.addListener((observable, o, n) -> {
 			if (n.doubleValue() <= 0) {
@@ -29,8 +29,8 @@ public class Rocket extends Projectile implements Harmable {
 	public void update(double deltaT) {
 		if (getTarget() != null)
 			setDestination(getTarget().getPosition());
-		move(deltaT * 2);
-		rotate(deltaT * 2);
+		move(deltaT);
+		rotate(deltaT);
 		super.update(deltaT);
 	}
 

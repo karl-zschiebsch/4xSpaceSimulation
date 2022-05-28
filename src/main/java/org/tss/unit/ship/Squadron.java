@@ -13,7 +13,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public final class Squadron<E extends SubUnit> extends Unit {
+public final class Squadron<E extends Unit> extends Unit {
 
 	private static final long serialVersionUID = 5980057030621705715L;
 

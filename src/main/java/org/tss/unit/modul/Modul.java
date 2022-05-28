@@ -4,17 +4,17 @@ import org.tss.base.Destructable;
 import org.tss.base.Entity;
 import org.tss.base.MinmaxDoubleValue;
 import org.tss.unit.Harmable;
-import org.tss.unit.ship.Ship;
+import org.tss.unit.Unit;
 
 public abstract class Modul implements Entity, Destructable, Harmable {
 
 	private static final long serialVersionUID = 384505554762996035L;
 
-	private final Ship ship;
+	private final Unit unit;
 
-	protected Modul(Ship ship) {
-		this.ship = ship;
-		ship.getModules().add(this);
+	protected Modul(Unit unit) {
+		this.unit = unit;
+		unit.getModules().add(this);
 
 		hitPoints.addListener((observable, o, n) -> {
 			if (n.doubleValue() <= 0) {
@@ -25,7 +25,7 @@ public abstract class Modul implements Entity, Destructable, Harmable {
 
 	@Override
 	public void destruct() {
-		ship.getModules().remove(this);
+		unit.getModules().remove(this);
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public abstract class Modul implements Entity, Destructable, Harmable {
 		return hitPoints.getCur();
 	}
 
-	public Ship getModular() {
-		return ship;
+	public Unit getModular() {
+		return unit;
 	}
 }

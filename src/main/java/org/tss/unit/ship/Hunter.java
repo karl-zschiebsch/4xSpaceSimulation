@@ -4,14 +4,14 @@ import java.util.function.Function;
 
 import org.tss.base.Constructor;
 import org.tss.controller.Controller;
-import org.tss.projectile.Rocket;
+import org.tss.projectile.Ray;
 import org.tss.unit.modul.Engine;
 import org.tss.unit.modul.Weapon;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
-public class Hunter extends SubUnit {
+public class Hunter extends Ship {
 
 	private static final long serialVersionUID = 1329879264811673280L;
 
@@ -23,10 +23,10 @@ public class Hunter extends SubUnit {
 		getChildren().add(poly);
 
 		new Engine(this, 2);
-		new Weapon(this, new Constructor<>(new Function<Controller, Rocket>() {
+		new Weapon(this, new Constructor<>(new Function<Controller, Ray>() {
 			@Override
-			public Rocket apply(Controller t) {
-				return new Rocket(t);
+			public Ray apply(Controller t) {
+				return new Ray(t);
 			}
 		}), .1, .5, 1);
 	}
