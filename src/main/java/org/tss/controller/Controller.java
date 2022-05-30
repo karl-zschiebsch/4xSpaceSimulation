@@ -1,33 +1,55 @@
 package org.tss.controller;
 
-import org.tss.base.Destructable;
+import java.util.EnumMap;
+
+import org.tss.controller.ResourceType.ResourceCost;
+import org.tss.entity.Destructable;
+import org.tss.entity.Entity;
 import org.tss.map.Map;
 import org.tss.unit.Unit;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-public class Controller implements Destructable {
+public class Controller implements Entity, Destructable {
 
 	protected final ObservableList<Unit> units = FXCollections.observableArrayList();
+
+	protected final EnumMap<ResourceType, DoubleProperty> resources = new EnumMap<>(ResourceType.class);
+	protected final EnumMap<ResourceType, DoubleProperty> upkeep = new EnumMap<>(ResourceType.class);
 
 	private final Map map;
 
 	public Controller(Map map) {
-		map.getControllers().add(this);
-
 		this.map = map;
-		units.addListener(new ListChangeListener<Unit>() {
 
+		map.getControllers().add(this);
+		units.addListener(new ListChangeListener<Unit>() {
 			@Override
 			public void onChanged(Change<? extends Unit> c) {
 				if (units.isEmpty()) {
 					destruct();
 				}
 			}
-
 		});
+	}
+
+	@Override
+	public void update(double deltaT) {
+		for (EnumMap.Entry<ResourceType, DoubleProperty> entry : upkeep.entrySet()) {
+			ResourceType key = entry.getKey();
+			DoubleProperty val = entry.getValue();
+
+			DoubleProperty p = resources.get(key);
+			if (p == null) {
+				resources.put(key, new SimpleDoubleProperty(val.get() * deltaT));
+			} else {
+				p.set(p.get() + val.get() * deltaT);
+			}
+		}
 	}
 
 	@Override
@@ -35,8 +57,44 @@ public class Controller implements Destructable {
 		map.getControllers().remove(this);
 	}
 
-	public ObservableList<Unit> getUnits() {
-		return units;
+	public void addUpkeep(ResourceCost cost) {
+		DoubleProperty p = upkeep.get(cost.type());
+		if (p == null) {
+			upkeep.put(cost.type(), new SimpleDoubleProperty(cost.costs()));
+		} else {
+			p.set(p.get() + cost.costs());
+		}
+	}
+
+	public void removeUpkeep(ResourceCost cost) {
+		DoubleProperty p = upkeep.get(cost.type());
+		if (p == null) {
+			upkeep.put(cost.type(), new SimpleDoubleProperty(-cost.costs()));
+		} else {
+			p.set(p.get() - cost.costs());
+		}
+	}
+
+	public boolean canPaid(ResourceCost r) {
+		DoubleProperty v = getResources().get(r.type());
+		if (v != null) {
+			if (v.get() >= r.costs()) {
+				return true;
+			}
+		}
+		resources.put(r.type(), new SimpleDoubleProperty());
+		return false;
+	}
+
+	public boolean pay(ResourceCost r) {
+		DoubleProperty v = getResources().get(r.type());
+		if (v != null) {
+			if (v.get() >= r.costs()) {
+				v.set(v.get() - r.costs());
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static Player main;
@@ -57,5 +115,13 @@ public class Controller implements Destructable {
 
 	public Map getMap() {
 		return map;
+	}
+
+	public ObservableList<Unit> getUnits() {
+		return units;
+	}
+
+	public EnumMap<ResourceType, DoubleProperty> getResources() {
+		return resources;
 	}
 }

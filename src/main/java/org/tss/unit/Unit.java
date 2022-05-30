@@ -2,11 +2,11 @@ package org.tss.unit;
 
 import java.util.ArrayList;
 
-import org.tss.base.MinmaxDoubleValue;
-import org.tss.base.SpaceObject;
 import org.tss.controller.Controller;
 import org.tss.controller.Player;
+import org.tss.entity.SpaceObject;
 import org.tss.unit.modul.Modul;
+import org.tss.value.PercentageValue;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -15,8 +15,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 
 public abstract class Unit extends SpaceObject implements Harmable {
-
-	private static final long serialVersionUID = 8147204360521291943L;
 
 	private final ObservableList<Modul> modules = FXCollections.observableArrayList();
 	private final ArrayList<Modul> removed = new ArrayList<>();
@@ -85,7 +83,7 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		return damage / getArmorPoints();
 	}
 
-	public MinmaxDoubleValue hitPoints = new MinmaxDoubleValue(1);
+	public PercentageValue hitPoints = new PercentageValue(1);
 
 	public final void setHitPoints(double value) {
 		hitPoints.setCur(value);
@@ -95,7 +93,7 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		return hitPoints.getCur();
 	}
 
-	public MinmaxDoubleValue armorPoints = new MinmaxDoubleValue(1);
+	public PercentageValue armorPoints = new PercentageValue(1);
 
 	public final void setArmorPoints(double value) {
 		armorPoints.setCur(value);
@@ -105,7 +103,7 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		return armorPoints.getCur();
 	}
 
-	public MinmaxDoubleValue shieldPoints = new MinmaxDoubleValue(0);
+	public PercentageValue shieldPoints = new PercentageValue(0);
 
 	public final void setShieldPoints(double value) {
 		shieldPoints.setCur(value);

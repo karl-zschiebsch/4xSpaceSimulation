@@ -1,4 +1,4 @@
-package org.tss.base;
+package org.tss.entity;
 
 public interface Destructable {
 	void destruct();

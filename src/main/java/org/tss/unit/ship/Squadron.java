@@ -13,9 +13,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public final class Squadron<E extends Unit> extends Unit {
-
-	private static final long serialVersionUID = 5980057030621705715L;
+public final class Squadron<E extends Ship> extends Unit {
 
 	private final ObservableList<E> subunits = FXCollections.observableArrayList();
 	private final ArrayList<E> removed = new ArrayList<>();

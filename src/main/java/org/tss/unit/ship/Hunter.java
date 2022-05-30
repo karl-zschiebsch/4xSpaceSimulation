@@ -2,8 +2,8 @@ package org.tss.unit.ship;
 
 import java.util.function.Function;
 
-import org.tss.base.Constructor;
 import org.tss.controller.Controller;
+import org.tss.entity.Constructor;
 import org.tss.projectile.Ray;
 import org.tss.unit.modul.Engine;
 import org.tss.unit.modul.Weapon;
@@ -12,8 +12,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
 public class Hunter extends Ship {
-
-	private static final long serialVersionUID = 1329879264811673280L;
 
 	public Hunter(Squadron<Hunter> squadron) {
 		super(squadron);
@@ -28,7 +26,7 @@ public class Hunter extends Ship {
 			public Ray apply(Controller t) {
 				return new Ray(t);
 			}
-		}), .1, .5, 1);
+		}), .1, .5, 0, 1);
 	}
 
 }

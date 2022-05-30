@@ -1,52 +1,85 @@
 package org.tss.unit.modul;
 
-import org.tss.base.Constructor;
+import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
+import static java.lang.Math.hypot;
+import static java.lang.Math.max;
+import static java.lang.Math.signum;
+import static java.lang.Math.toDegrees;
+
+import org.tss.entity.Constructor;
 import org.tss.projectile.Projectile;
-import org.tss.unit.ship.Ship;
+import org.tss.unit.Unit;
+import org.tss.value.DoubleCounter;
+import org.tss.value.IntegerCounter;
 
 public class Weapon extends Modul {
 
-	private static final long serialVersionUID = -6687452767666327138L;
-
 	private final Constructor<? extends Projectile> constructor;
-	private final double reload, firerate;
-	private final int salve;
+	private final DoubleCounter reloadspeed, firerate;
+	private final IntegerCounter salve;
 
-	public Weapon(Ship ship, Constructor<? extends Projectile> constructor, double firerate, double reload, int salve) {
-		super(ship);
+	public Weapon(Unit unit, Constructor<? extends Projectile> constructor, double firerate, double reloadspeed,
+			double rotationspeed, int salve) {
+		super(unit);
 		this.constructor = constructor;
-		this.firerate = firerate;
-		this.reload = reload;
-		this.salve = salve;
+		this.firerate = new DoubleCounter(firerate);
+		this.reloadspeed = new DoubleCounter(reloadspeed);
+		this.salve = new IntegerCounter(salve, 0);
+		this.rotationspeed = rotationspeed;
 	}
 
-	private double r = 0, f = 0;
-	private int s = 0;
-
-	@SuppressWarnings("unchecked")
 	@Override
 	public void update(double deltaT) {
-		if (r >= reload) {
-			if (getModular().getTarget() != null) {
-				if (f >= firerate) {
-					if (s < salve) {
+		if (getModular().getTarget() != null) {
+			if (rotationspeed != 0) {
+				rotate(deltaT * rotationspeed);
+			}
+			if (reloadspeed.hasReached()) {
+				if (firerate.hasReached()) {
+					if (!salve.hasReached()) {
 						constructor.create(getModular().getController(),
 								u -> u.place(getModular().getMap(), getModular().getPosition().getX(),
-										getModular().getPosition().getY(), getModular().getRotate()),
+										getModular().getPosition().getY(), getModular().getRotate() + rotate),
 								u -> u.setTarget(getModular().getTarget()));
-						s++;
-						f = 0;
+						firerate.down();
+						salve.up(1);
 					} else {
-						r = 0;
-						s = 0;
+						reloadspeed.down();
+						salve.down();
 					}
 				} else {
-					f += deltaT;
+					firerate.up(deltaT);
 				}
+			} else {
+				reloadspeed.up(deltaT);
 			}
-		} else {
-			r = r > reload ? reload : r + deltaT;
 		}
 	}
 
+	private double rotationspeed, rotate = 0;
+
+	public void rotate(double deltaT) {
+		double difX = getModular().getPosition().getX() - getModular().getTarget().getPosition().getX();
+		double difY = getModular().getPosition().getY() - getModular().getTarget().getPosition().getY();
+		double alpha = -toDegrees(atan2(difX, difY));
+		double length = hypot(difX, difY);
+		if (length > max(deltaT, 5)) {
+			double difR = alpha - getModular().getRotate() - rotate;
+			if (difR > 180) {
+				difR -= 360;
+			}
+			if (difR < -180) {
+				difR += 360;
+			}
+			if (difR > .5 || difR < -.5) {
+				double ang = deltaT;
+				if (ang > abs(difR)) {
+					rotate += difR;
+				} else {
+					rotate += signum(difR) * ang;
+				}
+			}
+		}
+	}
 }

@@ -1,14 +1,12 @@
 package org.tss.unit.modul;
 
-import org.tss.base.Destructable;
-import org.tss.base.Entity;
-import org.tss.base.MinmaxDoubleValue;
+import org.tss.entity.Destructable;
+import org.tss.entity.Entity;
 import org.tss.unit.Harmable;
 import org.tss.unit.Unit;
+import org.tss.value.PercentageValue;
 
 public abstract class Modul implements Entity, Destructable, Harmable {
-
-	private static final long serialVersionUID = 384505554762996035L;
 
 	private final Unit unit;
 
@@ -33,7 +31,7 @@ public abstract class Modul implements Entity, Destructable, Harmable {
 		hitPoints.setCur(hitPoints.getCur() - value);
 	};
 
-	protected MinmaxDoubleValue hitPoints = new MinmaxDoubleValue(1);
+	protected PercentageValue hitPoints = new PercentageValue(1);
 
 	public final void setHitPoints(double value) {
 		hitPoints.setCur(value);

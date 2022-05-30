@@ -5,8 +5,6 @@ import org.tss.unit.Unit;
 
 public class Ship extends Unit {
 
-	private static final long serialVersionUID = 221341942869079545L;
-
 	private final Squadron<? extends Unit> squadron;
 
 	protected Ship(Squadron<?> squadron) {

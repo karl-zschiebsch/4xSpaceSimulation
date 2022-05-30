@@ -1,7 +1,7 @@
 package org.tss.map;
 
-import org.tss.base.SpaceObject;
 import org.tss.controller.Controller;
+import org.tss.entity.SpaceObject;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;

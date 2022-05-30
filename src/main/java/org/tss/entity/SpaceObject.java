@@ -1,4 +1,4 @@
-package org.tss.base;
+package org.tss.entity;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.atan2;
@@ -19,8 +19,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 
 public abstract class SpaceObject extends Pane implements Entity, Placeable, Destructable {
-
-	private static final long serialVersionUID = 2581581743285122661L;
 
 	private final Controller controller;
 

@@ -1,18 +1,16 @@
 package org.tss.unit.modul;
 
-import org.tss.base.MinmaxDoubleValue;
-import org.tss.unit.ship.Ship;
+import org.tss.unit.Unit;
+import org.tss.value.PercentageValue;
 
 public class Shield extends Modul {
 
-	private static final long serialVersionUID = 4794258387594539089L;
-
-	private final MinmaxDoubleValue value;
+	private final PercentageValue value;
 	private final double regeneration;
 
-	public Shield(Ship ship, double max, double regeneration) {
-		super(ship);
-		this.value = ship.shieldPoints;
+	public Shield(Unit unit, double max, double regeneration) {
+		super(unit);
+		this.value = unit.shieldPoints;
 		this.regeneration = regeneration;
 
 		value.setMax(value.getMax() + max);
@@ -21,7 +19,7 @@ public class Shield extends Modul {
 
 	@Override
 	public void update(double deltaT) {
-		value.setCur(deltaT * regeneration);
+		value.setCur(value.getCur() + deltaT * regeneration);
 	}
 
 }

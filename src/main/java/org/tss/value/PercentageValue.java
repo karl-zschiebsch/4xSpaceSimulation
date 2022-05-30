@@ -1,30 +1,33 @@
-package org.tss.base;
+package org.tss.value;
 
 import com.sun.javafx.binding.ExpressionHelper;
 
 import javafx.beans.InvalidationListener;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-public class MinmaxDoubleValue implements ObservableValue<Double> {
+public class PercentageValue implements ObservableValue<Double> {
 
 	private ExpressionHelper<Double> helper = null;
 
+	private DoubleBinding relation = new DoubleBinding() {
+		@Override
+		protected double computeValue() {
+			return max == 0 ? 0 : cur / max;
+		}
+	};
+
 	private double cur, min, max;
 
-	public MinmaxDoubleValue(double cur, double min, double max) {
+	public PercentageValue(double cur, double min, double max) {
 		this.cur = cur;
 		this.min = min;
 		this.max = max;
 	}
 
-	public MinmaxDoubleValue(double value) {
+	public PercentageValue(double value) {
 		this(value, 0, value);
-	}
-
-	public MinmaxDoubleValue() {
-		this.min = Double.NEGATIVE_INFINITY;
-		this.max = Double.POSITIVE_INFINITY;
 	}
 
 	@Override
@@ -59,8 +62,10 @@ public class MinmaxDoubleValue implements ObservableValue<Double> {
 	protected final void set(double value) {
 		var temp = cur;
 		cur = Math.min(Math.max(value, min), max);
-		if (temp != cur)
+		if (temp != cur) {
 			fireValueChangedEvent();
+			relation.invalidate();
+		}
 	}
 
 	public void setCur(double value) {
@@ -79,10 +84,6 @@ public class MinmaxDoubleValue implements ObservableValue<Double> {
 		return max;
 	}
 
-	public boolean isMax() {
-		return cur == max;
-	}
-
 	public void setMin(double value) {
 		min = value;
 	}
@@ -91,7 +92,7 @@ public class MinmaxDoubleValue implements ObservableValue<Double> {
 		return min;
 	}
 
-	public boolean isMin() {
-		return cur == min;
+	public DoubleBinding getAssoziatedBinding() {
+		return relation;
 	}
 }

@@ -7,8 +7,6 @@ import javafx.scene.shape.Polygon;
 
 public class Ray extends Projectile {
 
-	private static final long serialVersionUID = -9146952228367397633L;
-
 	public Ray(Controller controller) {
 		super(controller, 0.08, 2, 0.1, 1.4);
 
