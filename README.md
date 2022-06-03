@@ -1,9 +1,5 @@
 # 4xSpaceSimulation
 
-[![Packages](https://github.com/fluidicon.png)](https://github.com/karl-zschiebsch/4xSpaceSimulation/packages)
-[![Issues](https://github.com/fluidicon.png)](https://github.com/karl-zschiebsch/4xSpaceSimulation/issues)
-[![Wiki](https://github.com/fluidicon.png)](https://github.com/karl-zschiebsch/4xSpaceSimulation/wiki)
-
 4xSpaceSimulation is a library based on JavaFX that comes with explore, expand, exploit and exterminate features. 
 
 ## Requirements
