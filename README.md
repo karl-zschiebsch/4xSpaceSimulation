@@ -19,11 +19,11 @@ Install it
 ```git
 git clone https://github.com/karl-zschiebsch/4xSpaceSimulation.git
 cd (...)
-git install
+mvn install
 ```
 and run it with the ``exec-maven-plugin``:
 ```git
-git exec:java
+mvn exec:java
 ```
 
 ### Run it without maven
