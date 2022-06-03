@@ -11,8 +11,11 @@ import org.tss.value.PercentageValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public abstract class Unit extends SpaceObject implements Harmable {
 
@@ -111,6 +114,12 @@ public abstract class Unit extends SpaceObject implements Harmable {
 
 	public final double getShieldPoints() {
 		return shieldPoints.getCur();
+	}
+
+	private final Rectangle rect = new Rectangle(20, 20, Color.BLACK);
+
+	public Node getIconified() {
+		return rect;
 	}
 
 	public ObservableList<Modul> getModules() {

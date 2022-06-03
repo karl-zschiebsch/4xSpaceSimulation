@@ -3,6 +3,7 @@ package org.tss;
 import java.util.EnumMap;
 
 import org.tss.controller.Controller;
+import org.tss.controller.Party;
 import org.tss.controller.Player;
 import org.tss.controller.ResourceType;
 import org.tss.controller.ResourceType.ResourceCost;
@@ -75,7 +76,7 @@ public class App extends Application {
 
 	Group group = new Group();
 	Map map = new Map(group, 1080, 720);
-	Player player = new Player(map);
+	Player player = new Player(new Party(), map);
 
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -90,14 +91,15 @@ public class App extends Application {
 		}
 
 		player.addUpkeep(new ResourceCost(ResourceType.CREDIT, 10.0));
-		Controller opponent = new Controller(map);
+		Controller opponent = new Controller(new Party());
 
-		new Carrier(opponent).place(map, 200, 600);
+		new Carrier(player).place(map, 200, 600);
 
-		new Defender(player).place(map, 400, 200);
-		new Defender(player).place(map, 700, 300);
+		new Defender(opponent).place(map, 400, 200);
+		new Defender(opponent).place(map, 700, 300);
 
 		pane.setCenter(map);
+		pane.setLeft(player.getOverview());
 
 		Label label = new Label();
 		label.textProperty().bind(resource);

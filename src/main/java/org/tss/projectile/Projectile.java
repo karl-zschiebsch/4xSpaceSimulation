@@ -29,7 +29,7 @@ public abstract class Projectile extends SpaceObject {
 
 		for (int i = 0; i < getMap().getObjects().size(); i++) {
 			SpaceObject object = getMap().getObjects().get(i);
-			if (object instanceof Harmable && object.getController() != getController()) {
+			if (object instanceof Harmable && object.getController().getParty() != getController().getParty()) {
 				if (inside(object)) {
 					((Harmable) object).harm(calc());
 					destruct();

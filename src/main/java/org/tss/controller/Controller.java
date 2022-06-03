@@ -5,7 +5,6 @@ import java.util.EnumMap;
 import org.tss.controller.ResourceType.ResourceCost;
 import org.tss.entity.Destructable;
 import org.tss.entity.Entity;
-import org.tss.map.Map;
 import org.tss.unit.Unit;
 
 import javafx.beans.property.DoubleProperty;
@@ -21,12 +20,12 @@ public class Controller implements Entity, Destructable {
 	protected final EnumMap<ResourceType, DoubleProperty> resources = new EnumMap<>(ResourceType.class);
 	protected final EnumMap<ResourceType, DoubleProperty> upkeep = new EnumMap<>(ResourceType.class);
 
-	private final Map map;
+	private final Party party;
 
-	public Controller(Map map) {
-		this.map = map;
+	public Controller(Party party) {
+		this.party = party;
 
-		map.getControllers().add(this);
+		party.getMembers().add(this);
 		units.addListener(new ListChangeListener<Unit>() {
 			@Override
 			public void onChanged(Change<? extends Unit> c) {
@@ -54,7 +53,7 @@ public class Controller implements Entity, Destructable {
 
 	@Override
 	public void destruct() {
-		map.getControllers().remove(this);
+		party.getMembers().remove(this);
 	}
 
 	public void addUpkeep(ResourceCost cost) {
@@ -113,15 +112,15 @@ public class Controller implements Entity, Destructable {
 		return this == main;
 	}
 
-	public Map getMap() {
-		return map;
-	}
-
 	public ObservableList<Unit> getUnits() {
 		return units;
 	}
 
 	public EnumMap<ResourceType, DoubleProperty> getResources() {
 		return resources;
+	}
+
+	public Party getParty() {
+		return party;
 	}
 }

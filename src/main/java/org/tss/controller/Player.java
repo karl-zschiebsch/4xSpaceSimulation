@@ -21,7 +21,7 @@ import javafx.scene.ParallelCamera;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class Player extends Controller {
 
@@ -33,29 +33,34 @@ public class Player extends Controller {
 
 	protected final ObservableList<Unit> selected = FXCollections.observableArrayList();
 
-	private final HBox box = new HBox();
+	private final VBox overview = new VBox(10);
+	private final Map map;
 
-	public Player(Map map) {
-		super(map);
+	public Player(Party party, Map map) {
+		super(party);
+		this.map = map;
 
 		selected.addListener(new ListChangeListener<Unit>() {
 			@Override
 			public void onChanged(Change<? extends Unit> c) {
 				c.next();
-				if (c.getList().size() == 1) {
-					Unit u = c.getList().get(1);
-					if (u instanceof Station) {
-						for (UnitBuilder unit : ((Station) u).getBuildings()) {
+				modified: {
+					if (c.getList().size() == 1) {
+						Unit u = c.getList().get(0);
+						if (u instanceof Station) {
+							for (UnitBuilder unit : ((Station) u).getBuildings()) {
 
-						}
-					} else {
-						for (Unit unit : c.getAddedSubList()) {
-
-						}
-						for (Unit unit : c.getRemoved()) {
-
+							}
+							break modified;
 						}
 					}
+					for (Unit unit : c.getRemoved()) {
+						overview.getChildren().remove(unit.getIconified());
+					}
+					for (Unit unit : c.getAddedSubList()) {
+						overview.getChildren().add(unit.getIconified());
+					}
+					break modified;
 				}
 			}
 		});
@@ -70,8 +75,8 @@ public class Player extends Controller {
 	private final Camera camera = new ParallelCamera();
 
 	public void centralize(Point2D z) {
-		camera.setLayoutX(z.getX() - getMap().getWidth() / 2);
-		camera.setLayoutY(z.getY() - getMap().getHeight() / 2);
+		camera.setLayoutX(z.getX() - map.getWidth() / 2);
+		camera.setLayoutY(z.getY() - map.getHeight() / 2);
 	}
 
 	public EventHandler<KeyEvent> getKeyHandle() {
@@ -137,6 +142,10 @@ public class Player extends Controller {
 
 	public ObservableList<Unit> getSelected() {
 		return selected;
+	}
+
+	public VBox getOverview() {
+		return overview;
 	}
 
 	public Camera getCamera() {
