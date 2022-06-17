@@ -1,44 +1,26 @@
 package org.tss;
 
-import java.util.EnumMap;
-
 import org.tss.controller.Controller;
 import org.tss.controller.Party;
 import org.tss.controller.Player;
 import org.tss.controller.ResourceType;
-import org.tss.controller.ResourceType.ResourceCost;
 import org.tss.map.Map;
 import org.tss.unit.ship.Carrier;
 import org.tss.unit.ship.Defender;
+import org.tss.unit.station.Headquarter;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.beans.binding.StringBinding;
-import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.shape.Line;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class App extends Application {
-
-	StringBinding resource = new StringBinding() {
-		@Override
-		protected String computeValue() {
-			StringBuilder string = new StringBuilder();
-			for (EnumMap.Entry<ResourceType, DoubleProperty> entry : player.getResources().entrySet()) {
-				ResourceType key = entry.getKey();
-				DoubleProperty val = entry.getValue();
-
-				string.append("[" + key + "] : " + val.getValue().intValue() + "\n");
-			}
-			return string.toString();
-		}
-	};
 
 	@Override
 	public void init() throws Exception {
@@ -53,6 +35,9 @@ public class App extends Application {
 				frameTimes[frameTimeIndex] = now;
 				frameTimeIndex = (frameTimeIndex + 1) % frameTimes.length;
 				if (frameTimeIndex == 0) {
+					for (int j = 0; j < map.getControllers().size(); j++) {
+						map.getControllers().get(j).update(1);
+					}
 					arrayFilled = true;
 				}
 				if (arrayFilled) {
@@ -64,11 +49,6 @@ public class App extends Application {
 					for (int i = 0; i < map.getObjects().size(); i++) {
 						map.getObjects().get(i).update(deltaT);
 					}
-
-					for (int j = 0; j < map.getControllers().size(); j++) {
-						map.getControllers().get(j).update(deltaT);
-					}
-					resource.invalidate();
 				}
 			}
 		}.start();
@@ -76,38 +56,34 @@ public class App extends Application {
 
 	Group group = new Group();
 	Map map = new Map(group, 1080, 720);
-	Player player = new Player(new Party(), map);
+	Player player = new Player(new Party(map));
 
 	@Override
 	public void start(Stage stage) throws Exception {
 
 		BorderPane pane = new BorderPane();
 
-		for (int x = -200; x <= 1_800; x += 100) {
-			group.getChildren().add(new Line(x, -200, x, 1_000));
-		}
-		for (int y = -200; y <= 1_000; y += 100) {
-			group.getChildren().add(new Line(-200, y, 1_800, y));
-		}
+		player.getResourceTable().put(ResourceType.CREDIT, "resource", 5000.0);
+		player.getResourceTable().put(ResourceType.CREDIT, "upkeep", 10.0);
+		new Headquarter(player).place(map, 100, 600);
+		Carrier carrier = new Carrier(player);
+		carrier.place(map, 200, 600);
 
-		player.addUpkeep(new ResourceCost(ResourceType.CREDIT, 10.0));
-		Controller opponent = new Controller(new Party());
-
-		new Carrier(player).place(map, 200, 600);
-
+		Controller opponent = new Controller(new Party(map));
 		new Defender(opponent).place(map, 400, 200);
 		new Defender(opponent).place(map, 700, 300);
 
-		pane.setCenter(map);
+		StackPane stack = new StackPane();
+		Rectangle rect = new Rectangle(1080, 720, Color.WHITE);
+		rect.setOpacity(0);
+		rect.addEventHandler(MouseEvent.MOUSE_CLICKED, player.getMouseHandle());
+		stack.getChildren().addAll(rect, map);
+
+		pane.setCenter(stack);
 		pane.setLeft(player.getOverview());
 
-		Label label = new Label();
-		label.textProperty().bind(resource);
-		pane.setTop(label);
-
 		Scene scene = new Scene(pane);
-		scene.addEventFilter(MouseEvent.MOUSE_CLICKED, player.getMouseHandle());
-		scene.addEventFilter(KeyEvent.KEY_PRESSED, player.getKeyHandle());
+		scene.setOnKeyPressed(player.getKeyHandle());
 
 		stage.setScene(scene);
 		stage.setIconified(false);

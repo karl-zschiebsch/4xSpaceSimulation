@@ -1,5 +1,7 @@
 package org.tss.value;
 
+import java.io.Serializable;
+
 import com.sun.javafx.binding.ExpressionHelper;
 
 import javafx.beans.InvalidationListener;
@@ -7,11 +9,12 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
-public class PercentageValue implements ObservableValue<Double> {
+public class PercentageValue implements ObservableValue<Double>, Serializable {
+	private static final long serialVersionUID = -7359024751630177192L;
 
 	private ExpressionHelper<Double> helper = null;
 
-	private DoubleBinding relation = new DoubleBinding() {
+	private final DoubleBinding relation = new DoubleBinding() {
 		@Override
 		protected double computeValue() {
 			return max == 0 ? 0 : cur / max;

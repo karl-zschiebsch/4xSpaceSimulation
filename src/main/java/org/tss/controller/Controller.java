@@ -1,28 +1,30 @@
 package org.tss.controller;
 
-import java.util.EnumMap;
+import java.io.Serializable;
+import java.util.EnumSet;
+import java.util.Set;
 
-import org.tss.controller.ResourceType.ResourceCost;
 import org.tss.entity.Destructable;
 import org.tss.entity.Entity;
 import org.tss.unit.Unit;
+import org.tss.value.HashTable;
 
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-public class Controller implements Entity, Destructable {
+public class Controller implements Entity, Destructable, Serializable {
 
-	protected final ObservableList<Unit> units = FXCollections.observableArrayList();
+	private static final long serialVersionUID = -7771921930095513632L;
 
-	protected final EnumMap<ResourceType, DoubleProperty> resources = new EnumMap<>(ResourceType.class);
-	protected final EnumMap<ResourceType, DoubleProperty> upkeep = new EnumMap<>(ResourceType.class);
+	protected transient final ObservableList<Unit> units = FXCollections.observableArrayList();
+
+	protected final HashTable<ResourceType, String, Double> resources;
 
 	private final Party party;
 
 	public Controller(Party party) {
+		this.resources = new HashTable<>(EnumSet.allOf(ResourceType.class), Set.of("resource", "upkeep"));
 		this.party = party;
 
 		party.getMembers().add(this);
@@ -38,17 +40,7 @@ public class Controller implements Entity, Destructable {
 
 	@Override
 	public void update(double deltaT) {
-		for (EnumMap.Entry<ResourceType, DoubleProperty> entry : upkeep.entrySet()) {
-			ResourceType key = entry.getKey();
-			DoubleProperty val = entry.getValue();
 
-			DoubleProperty p = resources.get(key);
-			if (p == null) {
-				resources.put(key, new SimpleDoubleProperty(val.get() * deltaT));
-			} else {
-				p.set(p.get() + val.get() * deltaT);
-			}
-		}
 	}
 
 	@Override
@@ -56,51 +48,11 @@ public class Controller implements Entity, Destructable {
 		party.getMembers().remove(this);
 	}
 
-	public void addUpkeep(ResourceCost cost) {
-		DoubleProperty p = upkeep.get(cost.type());
-		if (p == null) {
-			upkeep.put(cost.type(), new SimpleDoubleProperty(cost.costs()));
-		} else {
-			p.set(p.get() + cost.costs());
-		}
-	}
-
-	public void removeUpkeep(ResourceCost cost) {
-		DoubleProperty p = upkeep.get(cost.type());
-		if (p == null) {
-			upkeep.put(cost.type(), new SimpleDoubleProperty(-cost.costs()));
-		} else {
-			p.set(p.get() - cost.costs());
-		}
-	}
-
-	public boolean canPaid(ResourceCost r) {
-		DoubleProperty v = getResources().get(r.type());
-		if (v != null) {
-			if (v.get() >= r.costs()) {
-				return true;
-			}
-		}
-		resources.put(r.type(), new SimpleDoubleProperty());
-		return false;
-	}
-
-	public boolean pay(ResourceCost r) {
-		DoubleProperty v = getResources().get(r.type());
-		if (v != null) {
-			if (v.get() >= r.costs()) {
-				v.set(v.get() - r.costs());
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private static Player main;
 
-	protected void setMainController(Player player) throws Exception {
+	protected void setMainController(Player player) {
 		if (main != null)
-			throw new Exception("Only one main controller is allowed");
+			throw new UnsupportedOperationException();
 		main = player;
 	}
 
@@ -116,7 +68,11 @@ public class Controller implements Entity, Destructable {
 		return units;
 	}
 
-	public EnumMap<ResourceType, DoubleProperty> getResources() {
+	/**
+	 * @implNote rows -> {@code EnumSet.allOf(ResourceType.class)}
+	 * @implNote columns -> {@code Set.of("resource", "upkeep")}
+	 */
+	public HashTable<ResourceType, String, Double> getResourceTable() {
 		return resources;
 	}
 

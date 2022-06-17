@@ -3,6 +3,10 @@ package org.tss.unit.ship;
 import org.tss.controller.Controller;
 import org.tss.unit.Unit;
 
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+
 public class Ship extends Unit {
 
 	private final Squadron<? extends Unit> squadron;
@@ -26,5 +30,15 @@ public class Ship extends Unit {
 
 	public Squadron<?> getSquadron() {
 		return squadron;
+	}
+
+	@Override
+	public Node createIcon() {
+		return new Rectangle(20, 20, Color.BLUE);
+	}
+
+	@Override
+	public boolean isSupported() {
+		return true;
 	}
 }

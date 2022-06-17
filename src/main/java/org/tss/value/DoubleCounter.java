@@ -1,9 +1,10 @@
 package org.tss.value;
 
 public class DoubleCounter extends DownUpCounter<Double> {
+	private static final long serialVersionUID = 85993209095698932L;
 
 	public DoubleCounter(double up, double in) {
-		super(up);
+		super(up, in);
 	}
 
 	public DoubleCounter(double up) {
@@ -16,7 +17,12 @@ public class DoubleCounter extends DownUpCounter<Double> {
 	}
 
 	@Override
-	public void down() {
+	public void down(Double another) {
+		value -= another;
+	}
+
+	@Override
+	public void reset() {
 		value = 0.0;
 	}
 

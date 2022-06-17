@@ -14,10 +14,8 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
-public abstract class Unit extends SpaceObject implements Harmable {
+public abstract class Unit extends SpaceObject implements Harmable, Iconifiable<Node> {
 
 	private final ObservableList<Modul> modules = FXCollections.observableArrayList();
 	private final ArrayList<Modul> removed = new ArrayList<>();
@@ -116,13 +114,17 @@ public abstract class Unit extends SpaceObject implements Harmable {
 		return shieldPoints.getCur();
 	}
 
-	private final Rectangle rect = new Rectangle(20, 20, Color.BLACK);
-
-	public Node getIconified() {
-		return rect;
-	}
-
 	public ObservableList<Modul> getModules() {
 		return modules;
+	}
+
+	private transient Node icon;
+
+	@Override
+	public final Node getIcon() {
+		if (icon == null) {
+			icon = createIcon();
+		}
+		return icon;
 	}
 }

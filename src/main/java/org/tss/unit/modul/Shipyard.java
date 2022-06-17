@@ -10,6 +10,10 @@ public class Shipyard extends Modul {
 
 	@Override
 	public void update(double deltaT) {
-
+//		ArrayList<UnitBuilder> builder = ((Station) getUnit()).getProgress();
+////		System.out.println(builder);
+//		for (int i = 0; i < builder.size(); i++) {
+//			builder.get(i).update(deltaT);
+//		}
 	}
 }

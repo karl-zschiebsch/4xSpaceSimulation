@@ -41,7 +41,7 @@ public abstract class Modul implements Entity, Destructable, Harmable {
 		return hitPoints.getCur();
 	}
 
-	public Unit getModular() {
+	public Unit getUnit() {
 		return unit;
 	}
 }

@@ -41,5 +41,4 @@ public class Carrier extends Ship {
 		}), .6, 1, 10, 4);
 		new Shield(this, 6, 0.4);
 	}
-
 }

@@ -31,22 +31,22 @@ public class Weapon extends Modul {
 
 	@Override
 	public void update(double deltaT) {
-		if (getModular().getTarget() != null) {
+		if (getUnit().getTarget() != null) {
 			if (rotationspeed != 0) {
 				rotate(deltaT * rotationspeed);
 			}
 			if (reloadspeed.hasReached()) {
 				if (firerate.hasReached()) {
 					if (!salve.hasReached()) {
-						constructor.create(getModular().getController(),
-								u -> u.place(getModular().getMap(), getModular().getPosition().getX(),
-										getModular().getPosition().getY(), getModular().getRotate() + rotate),
-								u -> u.setTarget(getModular().getTarget()));
-						firerate.down();
+						constructor.create(getUnit().getController(),
+								u -> u.place(getUnit().getMap(), getUnit().getPosition().getX(),
+										getUnit().getPosition().getY(), getUnit().getRotate() + rotate),
+								u -> u.setTarget(getUnit().getTarget()));
+						firerate.reset();
 						salve.up(1);
 					} else {
-						reloadspeed.down();
-						salve.down();
+						reloadspeed.reset();
+						salve.reset();
 					}
 				} else {
 					firerate.up(deltaT);
@@ -60,12 +60,12 @@ public class Weapon extends Modul {
 	private double rotationspeed, rotate = 0;
 
 	public void rotate(double deltaT) {
-		double difX = getModular().getPosition().getX() - getModular().getTarget().getPosition().getX();
-		double difY = getModular().getPosition().getY() - getModular().getTarget().getPosition().getY();
+		double difX = getUnit().getPosition().getX() - getUnit().getTarget().getPosition().getX();
+		double difY = getUnit().getPosition().getY() - getUnit().getTarget().getPosition().getY();
 		double alpha = -toDegrees(atan2(difX, difY));
 		double length = hypot(difX, difY);
 		if (length > max(deltaT, 5)) {
-			double difR = alpha - getModular().getRotate() - rotate;
+			double difR = alpha - getUnit().getRotate() - rotate;
 			if (difR > 180) {
 				difR -= 360;
 			}

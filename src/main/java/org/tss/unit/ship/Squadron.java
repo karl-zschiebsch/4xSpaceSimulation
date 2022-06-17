@@ -10,6 +10,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -99,5 +100,15 @@ public final class Squadron<E extends Ship> extends Unit {
 
 	public ObservableList<E> getSubUnits() {
 		return subunits;
+	}
+
+	@Override
+	public Node createIcon() {
+		return new Rectangle(20, 20, Color.GREEN);
+	}
+
+	@Override
+	public boolean isSupported() {
+		return true;
 	}
 }

@@ -22,11 +22,11 @@ public class Hangar extends Modul {
 	public void update(double deltaT) {
 		if (!capaticity.hasReached()) {
 			if (droprate.hasReached()) {
-				constructor.create(getModular().getController(),
-						u -> u.place(getModular().getMap(), getModular().getPosition().getX(),
-								getModular().getPosition().getY(), getModular().getRotate()),
-						u -> u.setTarget(getModular().getTarget()));
-				droprate.down();
+				constructor.create(getUnit().getController(),
+						u -> u.place(getUnit().getMap(), getUnit().getPosition().getX(),
+								getUnit().getPosition().getY(), getUnit().getRotate()),
+						u -> u.setTarget(getUnit().getTarget()));
+				droprate.reset();
 				capaticity.up(1);
 			} else {
 				droprate.up(deltaT);

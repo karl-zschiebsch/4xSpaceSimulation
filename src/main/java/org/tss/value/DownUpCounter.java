@@ -1,8 +1,11 @@
 package org.tss.value;
 
-public abstract class DownUpCounter<T extends Number> {
+import java.io.Serializable;
 
-	protected final T up;
+public abstract class DownUpCounter<T extends Number> implements Serializable {
+	private static final long serialVersionUID = -5400818084388635793L;
+
+	protected T up, value;
 
 	public DownUpCounter(T up, T in) {
 		this.up = up;
@@ -11,17 +14,30 @@ public abstract class DownUpCounter<T extends Number> {
 
 	public DownUpCounter(T up) {
 		this(up, up);
+		reset();
 	}
-
-	protected T value;
 
 	public abstract void up(T another);
 
-	public abstract void down();
+	public abstract void down(T another);
+
+	public abstract void reset();
 
 	public abstract boolean hasReached();
 
+	public T getValue() {
+		return value;
+	}
+
+	public void setValue(T another) {
+		value = another;
+	}
+
 	public T getUp() {
 		return up;
+	}
+
+	public void setUp(T another) {
+		up = another;
 	}
 }

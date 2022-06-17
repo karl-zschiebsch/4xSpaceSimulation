@@ -1,15 +1,16 @@
 package org.tss.unit.station;
 
-import java.util.ArrayList;
-
 import org.tss.controller.Controller;
 import org.tss.unit.Unit;
-import org.tss.unit.UnitBuilder;
+
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class Station extends Unit {
 
-	private final ArrayList<UnitBuilder> buildings = new ArrayList<>();
-	private final ArrayList<UnitBuilder> progress = new ArrayList<>();
+//	private final ArrayList<UnitBuilder> buildings = new ArrayList<>();
+//	private final ArrayList<UnitBuilder> progress = new ArrayList<>();
 
 	protected Station(Controller controller) {
 		super(controller);
@@ -26,16 +27,26 @@ public class Station extends Unit {
 	}
 
 	public void progress(double deltaT) {
-		for (int i = 0; i < progress.size(); i++) {
-			progress.get(i).update(deltaT);
-		}
+//		for (int i = 0; i < progress.size(); i++) {
+//			progress.get(i).update(deltaT);
+//		}
 	}
 
-	public ArrayList<UnitBuilder> getBuildings() {
-		return buildings;
+	@Override
+	public Node createIcon() {
+		return new Rectangle(20, 20, Color.GRAY);
 	}
 
-	public ArrayList<UnitBuilder> getProgress() {
-		return progress;
+	@Override
+	public boolean isSupported() {
+		return true;
 	}
+
+//	public ArrayList<UnitBuilder> getBuildings() {
+//		return buildings;
+//	}
+//
+//	public ArrayList<UnitBuilder> getProgress() {
+//		return progress;
+//	}
 }
