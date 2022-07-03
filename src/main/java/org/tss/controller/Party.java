@@ -6,7 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-public class Party {
+public final class Party {
 
 	private transient final ObservableList<Controller> members = FXCollections.observableArrayList();
 
