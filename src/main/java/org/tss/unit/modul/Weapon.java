@@ -38,7 +38,7 @@ public class Weapon extends Modul {
 			if (reloadspeed.hasReached()) {
 				if (firerate.hasReached()) {
 					if (!salve.hasReached()) {
-						constructor.create(getUnit().getController(),
+						constructor.create(
 								u -> u.place(getUnit().getMap(), getUnit().getPosition().getX(),
 										getUnit().getPosition().getY(), getUnit().getRotate() + rotate),
 								u -> u.setTarget(getUnit().getTarget()));

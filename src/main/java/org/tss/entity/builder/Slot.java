@@ -25,7 +25,7 @@ public class Slot extends Pane implements Entity {
 	public void update(double deltaT) {
 		counter.up(deltaT);
 		if (counter.hasReached()) {
-			constructor.create(builder.getController());
+			constructor.create();
 		}
 		builder.getSlots().remove(this);
 	}

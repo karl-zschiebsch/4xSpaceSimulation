@@ -6,8 +6,9 @@ import static javafx.scene.input.KeyCode.S;
 import java.util.EnumMap;
 import java.util.function.Consumer;
 
+import org.tss.entity.builder.Builder;
+import org.tss.entity.builder.Dev;
 import org.tss.unit.Unit;
-import org.tss.unit.station.Station;
 import org.tss.value.IntegerCounter;
 
 import javafx.collections.FXCollections;
@@ -22,6 +23,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 public class Player extends Controller {
 
@@ -46,10 +49,18 @@ public class Player extends Controller {
 			public void onChanged(Change<? extends Unit> c) {
 				c.next();
 				if (c.getList().size() == 1) {
+					System.out.println("Is Single!");
 					Unit u = c.getList().get(0);
-					if (u instanceof Station) {
-						// TODO add types to options
+					if (u instanceof Builder) {
+						for (Dev dev : ((Builder) u).getDevs()) {
+							options.getChildren().add(dev.getIcon());
+						}
+						options.getChildren().add(new Rectangle(20, 20, Color.RED));
+						System.out.println("Add Layer");
 					}
+				} else {
+					options.getChildren().clear();
+					System.out.println("Clear.");
 				}
 
 				for (Unit unit : c.getRemoved()) {

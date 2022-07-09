@@ -1,7 +1,5 @@
 package org.tss.unit.ship;
 
-import java.util.function.Function;
-
 import org.tss.controller.Controller;
 import org.tss.entity.Constructor;
 import org.tss.projectile.Rocket;
@@ -22,11 +20,8 @@ public final class Defender extends Ship {
 		getChildren().add(poly);
 
 		new Engine(this, .72);
-		new Weapon(this, new Constructor<>(new Function<Controller, Rocket>() {
-			@Override
-			public Rocket apply(Controller t) {
-				return new Rocket(t);
-			}
+		new Weapon(this, new Constructor<>(() -> {
+			return new Rocket(getController());
 		}), .6, 1, 45, 4);
 		new Shield(this, 4, 0.4);
 	}

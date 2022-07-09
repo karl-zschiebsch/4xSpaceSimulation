@@ -1,9 +1,9 @@
 package org.tss.unit.station;
 
-import java.util.function.Function;
-
 import org.tss.controller.Controller;
 import org.tss.entity.Constructor;
+import org.tss.entity.builder.Dev;
+import org.tss.entity.builder.Slot;
 import org.tss.projectile.Rocket;
 import org.tss.unit.modul.Shield;
 import org.tss.unit.modul.Shipyard;
@@ -21,14 +21,11 @@ public class Headquarter extends Station {
 		poly.setFill(Color.BLUE);
 		getChildren().add(poly);
 
-		new Weapon(this, new Constructor<>(new Function<Controller, Rocket>() {
-			@Override
-			public Rocket apply(Controller t) {
-				return new Rocket(t);
-			}
-		}), .6, 1, 15, 4);
+		new Weapon(this, new Constructor<>(() -> new Rocket(getController())), .6, 1, 15, 4);
 		new Shield(this, 20, 10);
 		new Shipyard(this);
+
+		new Dev(this, () -> new Slot(this, new Constructor<>(null), 5));
 	}
 
 }

@@ -1,15 +1,12 @@
 package org.tss.entity;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-import org.tss.controller.Controller;
-
-public record Constructor<T extends SpaceObject> (Function<Controller, T> creator) {
+public record Constructor<T extends SpaceObject> (Cloner<T> creator) {
 
 	@SafeVarargs
-	public final T create(Controller controller, Consumer<T>... options) {
-		T created = creator.apply(controller);
+	public final T create(Consumer<T>... options) {
+		T created = creator.next();
 		for (Consumer<T> option : options) {
 			option.accept(created);
 		}

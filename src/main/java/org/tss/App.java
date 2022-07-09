@@ -81,6 +81,7 @@ public class App extends Application {
 
 		pane.setCenter(stack);
 		pane.setLeft(player.getOverview());
+		pane.setRight(player.getOptions());
 
 		Scene scene = new Scene(pane);
 		scene.setOnKeyPressed(player.getKeyHandle());

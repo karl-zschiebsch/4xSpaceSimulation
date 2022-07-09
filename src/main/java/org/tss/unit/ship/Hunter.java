@@ -1,8 +1,5 @@
 package org.tss.unit.ship;
 
-import java.util.function.Function;
-
-import org.tss.controller.Controller;
 import org.tss.entity.Constructor;
 import org.tss.projectile.Ray;
 import org.tss.unit.modul.Engine;
@@ -22,12 +19,7 @@ public class Hunter extends Ship {
 		getChildren().add(poly);
 
 		new Engine(this, 2);
-		new Weapon(this, new Constructor<>(new Function<Controller, Ray>() {
-			@Override
-			public Ray apply(Controller t) {
-				return new Ray(t);
-			}
-		}), .1, .5, 0, 1);
+		new Weapon(this, new Constructor<>(() -> new Ray(getController())), .1, .5, 0, 1);
 	}
 
 	@Override

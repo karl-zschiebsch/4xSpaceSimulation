@@ -8,8 +8,6 @@ import org.tss.unit.modul.Hangar;
 import org.tss.unit.modul.Shield;
 import org.tss.unit.modul.Weapon;
 
-import com.google.common.base.Function;
-
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 
@@ -23,21 +21,15 @@ public class Carrier extends Ship {
 		getChildren().add(poly);
 
 		new Engine(this, .26);
-		new Hangar(this, new Constructor<Squadron<Hunter>>(new Function<Controller, Squadron<Hunter>>() {
-			@Override
-			public Squadron<Hunter> apply(Controller c) {
-				Squadron<Hunter> squad = new Squadron<>(controller);
-				for (int i = 0; i < 3; i++) {
-					squad.getSubUnits().add(new Hunter(squad));
-				}
-				return squad;
+		new Hangar(this, new Constructor<Squadron<Hunter>>(() -> {
+			Squadron<Hunter> squad = new Squadron<>(getController());
+			for (int i = 0; i < 3; i++) {
+				squad.getSubUnits().add(new Hunter(squad));
 			}
+			return squad;
 		}), 4.5, 3);
-		new Weapon(this, new Constructor<>(new Function<Controller, Rocket>() {
-			@Override
-			public Rocket apply(Controller t) {
-				return new Rocket(t);
-			}
+		new Weapon(this, new Constructor<>(() -> {
+			return new Rocket(getController());
 		}), .6, 1, 10, 4);
 		new Shield(this, 6, 0.4);
 	}
