@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 
 import org.tss.entity.builder.Builder;
 import org.tss.entity.builder.Dev;
+import org.tss.entity.builder.Slot;
 import org.tss.unit.Unit;
 import org.tss.value.IntegerCounter;
 
@@ -23,13 +24,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 public class Player extends Controller {
-
-	private static final long serialVersionUID = -2070557564288348371L;
-
 	protected static final EnumMap<KeyCode, Consumer<Player>> SHORTCUTS = new EnumMap<>(KeyCode.class);
 	static {
 		SHORTCUTS.put(A, c -> c.selected.setAll(c.units));
@@ -38,8 +34,8 @@ public class Player extends Controller {
 
 	protected final ObservableList<Unit> selected = FXCollections.observableArrayList();
 
-	private final VBox overview = new VBox(10);
-	private final HBox options = new HBox(10);
+	private final HBox devs = new HBox(10), slots = new HBox(10);
+	private final VBox overview = new VBox(10), options = new VBox(10, slots, devs);
 
 	public Player(Party party) {
 		super(party);
@@ -49,18 +45,20 @@ public class Player extends Controller {
 			public void onChanged(Change<? extends Unit> c) {
 				c.next();
 				if (c.getList().size() == 1) {
-					System.out.println("Is Single!");
 					Unit u = c.getList().get(0);
 					if (u instanceof Builder) {
-						for (Dev dev : ((Builder) u).getDevs()) {
-							options.getChildren().add(dev.getIcon());
+						Builder builder = (Builder) u;
+						for (Dev dev : builder.getDevs()) {
+							devs.getChildren().add(dev.getIcon());
 						}
-						options.getChildren().add(new Rectangle(20, 20, Color.RED));
-						System.out.println("Add Layer");
+						for (Slot slot : builder.getSlots()) {
+							slots.getChildren().add(slot.getIcon());
+						}
+						System.out.println(builder);
 					}
 				} else {
-					options.getChildren().clear();
-					System.out.println("Clear.");
+					devs.getChildren().clear();
+					slots.getChildren().clear();
 				}
 
 				for (Unit unit : c.getRemoved()) {
@@ -158,7 +156,7 @@ public class Player extends Controller {
 		return overview;
 	}
 
-	public HBox getOptions() {
+	public VBox getOptions() {
 		return options;
 	}
 

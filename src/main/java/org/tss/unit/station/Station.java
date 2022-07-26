@@ -34,12 +34,6 @@ public class Station extends Unit implements Builder {
 
 	}
 
-	public void progress(double deltaT) {
-		for (Slot slot : slots) {
-			slot.update(deltaT);
-		}
-	}
-
 	@Override
 	public Node createIcon() {
 		return new Rectangle(20, 20, Color.GRAY);

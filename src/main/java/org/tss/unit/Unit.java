@@ -124,7 +124,23 @@ public abstract class Unit extends SpaceObject implements Harmable, Iconifiable<
 	public final Node getIcon() {
 		if (icon == null) {
 			icon = createIcon();
+			addMouseEvents();
+			addTouchEvents();
 		}
 		return icon;
+	}
+
+	@Override
+	public void addMouseEvents() {
+		Iconifiable.applyMouseEvents(icon, e -> {
+			if (e.getEventType() == MouseEvent.MOUSE_CLICKED) {
+				if (e.getButton() == MouseButton.PRIMARY) {
+					getController().getMainController().getSelected().retainAll(this);
+				}
+				if (e.getButton() == MouseButton.SECONDARY) {
+					getController().getMainController().getSelected().remove(this);
+				}
+			}
+		});
 	}
 }

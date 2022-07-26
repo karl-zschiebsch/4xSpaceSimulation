@@ -30,6 +30,8 @@ public abstract class SpaceObject extends Pane implements Entity, Placeable, Des
 
 	@Override
 	public void place(Map map, double x, double y, double r) {
+		if (map == null)
+			throw new IllegalArgumentException("map can not be null");
 		this.map = map;
 		setLayoutX(x - getWidth() / 2);
 		setLayoutY(y - getHeight() / 2);
@@ -111,6 +113,24 @@ public abstract class SpaceObject extends Pane implements Entity, Placeable, Des
 
 	public boolean inside(SpaceObject o) {
 		return o.getBoundsInParent().contains(getPosition());
+	}
+
+	public SpaceObject next() {
+		if (getMap() == null)
+			throw new UnsupportedOperationException("place unit before using this method");
+
+		Double distance = 1_000.0;
+		SpaceObject near = null;
+		for (SpaceObject obj : getMap().getObjects()) {
+			if (obj instanceof Unit && obj != null) {
+				var between = obj.getPosition().distance(getPosition());
+				if (between < distance) {
+					distance = between;
+					near = obj;
+				}
+			}
+		}
+		return near;
 	}
 
 	public Controller getController() {

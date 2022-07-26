@@ -32,6 +32,7 @@ public class Dev implements Iconifiable<Node> {
 
 	void buy() {
 		cloner.next().add();
+		System.out.println("buy");
 	}
 
 	private transient Node icon;

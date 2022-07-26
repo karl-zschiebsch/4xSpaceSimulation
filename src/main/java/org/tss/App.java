@@ -16,7 +16,6 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
@@ -60,28 +59,26 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-
 		BorderPane pane = new BorderPane();
 
 		player.getResourceTable().put(ResourceType.CREDIT, "resource", 5000.0);
 		player.getResourceTable().put(ResourceType.CREDIT, "upkeep", 10.0);
 		new Headquarter(player).place(map, 100, 600);
-		Carrier carrier = new Carrier(player);
-		carrier.place(map, 200, 600);
+		new Carrier(player).place(map, 200, 600);
 
 		Controller opponent = new Controller(new Party(map));
 		new Defender(opponent).place(map, 400, 200);
 		new Defender(opponent).place(map, 700, 300);
 
 		StackPane stack = new StackPane();
-		Rectangle rect = new Rectangle(1080, 720, Color.WHITE);
+		Rectangle rect = new Rectangle(1080, 720);
 		rect.setOpacity(0);
 		rect.addEventHandler(MouseEvent.MOUSE_CLICKED, player.getMouseHandle());
 		stack.getChildren().addAll(rect, map);
 
 		pane.setCenter(stack);
 		pane.setLeft(player.getOverview());
-		pane.setRight(player.getOptions());
+		pane.setBottom(player.getOptions());
 
 		Scene scene = new Scene(pane);
 		scene.setOnKeyPressed(player.getKeyHandle());

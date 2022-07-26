@@ -1,6 +1,5 @@
 package org.tss.controller;
 
-import java.io.Serializable;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -13,18 +12,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
-public class Controller implements Entity, Destructable, Serializable {
-
-	private static final long serialVersionUID = -7771921930095513632L;
-
-	protected transient final ObservableList<Unit> units = FXCollections.observableArrayList();
-
-	protected final HashTable<ResourceType, String, Double> resources;
+public class Controller implements Entity, Destructable {
+	protected final ObservableList<Unit> units = FXCollections.observableArrayList();
+	protected final HashTable<ResourceType, String, Double> resources = new HashTable<>(
+			EnumSet.allOf(ResourceType.class), Set.of("resource", "upkeep"));;
 
 	private final Party party;
 
 	public Controller(Party party) {
-		this.resources = new HashTable<>(EnumSet.allOf(ResourceType.class), Set.of("resource", "upkeep"));
 		this.party = party;
 
 		party.getMembers().add(this);
